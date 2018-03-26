@@ -5,7 +5,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/test.exe",
+            "program": "${workspaceFolder}/bin/passsniper.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

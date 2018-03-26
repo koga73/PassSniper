@@ -12,7 +12,7 @@
             },
             "args": [
                 "-g", "src/main.cpp",
-                "-o", "bin/test.exe"
+                "-o", "bin/passsniper.exe"
             ],
             "group": {
                 "kind": "build",
