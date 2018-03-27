@@ -1,12 +1,15 @@
 #include <iostream>
 #include <conio.h>
-#include <string>
-#include <sstream>
+
+#include "options.h"
 
 using namespace std;
 
-void getOptions();
-int getNum(int defaultNum, string message);
+Options* getOptions();
+int getNum(int defaultVal, string message);
+bool getBool(bool defaultVal, string message);
+string getString(string defaultVal, string message);
+string getString();
 
 int main(int argc, char **argv){
     cout << "    ____                  _____       _                " << endl;
@@ -30,12 +33,15 @@ int main(int argc, char **argv){
         }
     } while (key != 13);
     
-    getOptions();
+    Options* options = getOptions();
+    cout << endl << options << endl;
 
     system("PAUSE");
 }
 
-void getOptions(){
+Options* getOptions(){
+    Options* options = new Options();
+
     //Target
     bool isIndividual;
     bool isOrganization;
@@ -58,9 +64,10 @@ void getOptions(){
             cout << endl << "Please type [1] or [2] and press [ENTER]" << endl;
         }
     } while (true);
+    options->dataIsIndividual = isIndividual;
+    options->dataIsOrganization = isOrganization;
 
     //Names
-    string names;
     cout << endl;
     cout << "Names (Optional)(Comma Separated)" << endl;
     if (isIndividual){
@@ -69,13 +76,9 @@ void getOptions(){
     if (isOrganization){
         cout << "      (Company,Street,Other)" << endl;
     }
-    cout << ":";
-    cin.clear();
-    cin.sync();
-    getline(cin, names);
+    options->dataNames = getString();
 
     //Keywords
-    string keywords;
     cout << endl;
     cout << "Keywords (Optional)(Comma Separated)" << endl;
     if (isIndividual){
@@ -84,13 +87,9 @@ void getOptions(){
     if (isOrganization){
         cout << "         (Mascot,Products,Other)" << endl;
     }
-    cout << ":";
-    cin.clear();
-    cin.sync();
-    getline(cin, keywords);
+    options->dataKeywords = getString();
 
     //Dates
-    string dates;
     cout << endl;
     cout << "Significant Dates (Optional)(Comma Separated)(mm-dd-yyyy)" << endl;
     if (isIndividual){
@@ -99,13 +98,9 @@ void getOptions(){
     if (isOrganization){
         cout << "                  (Founded,Other)" << endl;
     }
-    cout << ":";
-    cin.clear();
-    cin.sync();
-    getline(cin, dates);
+    options->dataDates = getString();
 
     //Numbers
-    string numbers;
     cout << endl;
     cout << "Significant Numbers (Optional)(Comma Separated)(555-5555)" << endl;
     if (isIndividual){
@@ -114,26 +109,26 @@ void getOptions(){
     if (isOrganization){
         cout << "                    (Street,Phone,ID,Other)" << endl;
     }
-    cout << ":";
-    cin.clear();
-    cin.sync();
-    getline(cin, numbers);
+    options->dataNumbers = getString();
 
-    //Keyspace min
-    int min = getNum(7, "Keyspace - Minimum Length (Required)");
+    options->ksMin = getNum(7, "Keyspace - Minimum Length");
+    options->ksMax = getNum(15, "Keyspace - Maximum Length");
+    options->ksUseLower = getBool(true, "Keyspace - Lowercase");
+    options->ksUseUpper = getBool(true, "Keyspace - Uppercase");
+    options->ksUseNum = getBool(true, "Keyspace - Numbers");
+    options->optLeet = getBool(true, "Option - Leet Substitution (Example 'e' > '3')");
+    options->optPrepend = getString("!,#,$,1,123", "Option - Prepend Sequences (Comma Separated)");
+    options->optAppend = getString("!,#,$,1,123", "Option - Append Sequences (Comma Separated)");
 
-    //Keyspace max
-    int max = getNum(15, "Keyspace - Maximum Length (Required)");
-
-    cout << min << " " << max << endl;
+    return options;
 }
 
-int getNum(int defaultNum, string message){
-    int num = defaultNum;
+int getNum(int defaultVal, string message){
+    int val = defaultVal;
     do {
         string input;
         cout << endl << message << endl;
-        cout << ": (" << num << ") ";
+        cout << ": (" << val << ") ";
         cin.clear();
         cin.sync();
         getline(cin, input);
@@ -141,11 +136,55 @@ int getNum(int defaultNum, string message){
             break;
         }
         try {
-            num = stoi(input);
+            val = stoi(input);
             break;
         } catch (exception ex){
             cout << endl << "Please type a valid number" << endl;
         }
     } while (true);
-    return num;
+    return val;
+}
+
+bool getBool(bool defaultVal, string message){
+    bool val = defaultVal;
+    do {
+        string input;
+        cout << endl << message << endl;
+        cout << ": (" << ((val) ? "y" : "n") << ") ";
+        cin.clear();
+        cin.sync();
+        getline(cin, input);
+        if (!input.length()){ //Default
+            break;
+        }
+        if (input == "y" || input == "n"){
+            val = input == "y";
+            break;
+        } else {
+            cout << endl << "Please type 'y' or 'n'" << endl;
+        }
+    } while (true);
+    return val;
+}
+
+string getString(){
+    return getString("", "");
+}
+string getString(string defaultVal, string message){
+    string val = defaultVal;
+    string input;
+    if (message.length()){
+        cout << endl << message << endl;
+    }
+    cout << ":";
+    if (val.length()){
+        cout << " (" << val << ") ";
+    }
+    cin.clear();
+    cin.sync();
+    getline(cin, input);
+    if (input.length()){
+        val = input;
+    }
+    return val;
 }
