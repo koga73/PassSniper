@@ -3,10 +3,15 @@
 #include <conio.h>
 
 #include "options.h"
+#include "filebuffer.h"
+#include "utils.h"
 
 using namespace std;
 
+FileBuffer* fb;
+
 Options* getOptions();
+void generate(Options*& options, FileBuffer*& fb);
 int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
 string getString(string defaultVal, string message);
@@ -19,7 +24,7 @@ int main(int argc, char **argv){
     cout << " / ____/ /_/ (__  |__  )___/ / / / / / /_/ /  __/ /    " << endl;
     cout << "/_/    \\__,_/____/____//____/_/ /_/_/ .___/\\___/_/     " << endl;
     cout << "                                   /_/                 " << endl;
-    cout << "Generating better quality wordlists for pentesting" << endl;
+    cout << "Generating targeted wordlists for pentesting" << endl;
     cout << endl;
     cout << "PassSniper v1.0.0 - AJ Savino" << endl;
     cout << "CLI Usage: passsniper [outputfile]" << endl;
@@ -37,25 +42,17 @@ int main(int argc, char **argv){
         }
     } while (key != 13);
 
-    //Verify output file
+    //Get output file
     string outputFile = "./output.txt";
     if (argc == 2){
         outputFile = argv[1];
     }
     outputFile = getString(outputFile, "Output File");
-    ofstream ofs;
-    try {
-        if (!outputFile.length()){
-            throw "Undefined output file.";
-        }
-        ofs.open(outputFile, ios::out | ios::app); //Open file for output and append to eof
-        if (!ofs || !ofs.is_open()){
-            throw "There was an error opening the output file.";
-        }
-        ofs.close();
-    } catch (const char* ex){
-        cout << ex << " Exiting." << endl;
 
+    //Test opening file
+    fb = new FileBuffer(outputFile);
+    if (!fb->test()){
+        cout << "Could not open output file. Exiting." << endl;
         system("PAUSE");
         return 1;
     }
@@ -64,6 +61,22 @@ int main(int argc, char **argv){
     Options* options = getOptions();
     cout << endl << options << endl;
 
+    string errorMsg;
+    try {
+        generate(options, fb);
+    } catch (ios::failure &ex){
+        errorMsg = ex.what();
+    } catch (const char* ex){
+        errorMsg = string(ex);
+    } catch (...){
+        errorMsg = "An error occured.";
+    }
+    if (errorMsg.length()){
+        cout << errorMsg << " Exiting." << endl;
+        system("PAUSE");
+        return 1;
+    }
+    
     system("PAUSE");
     return 0;
 }
@@ -163,6 +176,13 @@ Options* getOptions(){
     }
 
     return options;
+}
+
+void generate(Options*& options, FileBuffer*& fb){
+    for (int i = 0; i < 10000000; i++){
+        fb->addLine(to_string(i));
+    }
+    fb->flush();
 }
 
 int getNum(int defaultVal, string message){

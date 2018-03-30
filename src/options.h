@@ -1,8 +1,6 @@
 #ifndef ___OPTIONS___
 #define ___OPTIONS___
 
-#include <iostream>
-
 using namespace std;
 
 class Options {
