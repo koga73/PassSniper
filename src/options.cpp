@@ -22,7 +22,7 @@ void Options::demoOrganization(){
 	dataNames = "initech";
 	dataKeywords = "tps,swingline";
 	dataDates = "02-19-1999";
-	dataNumbers = "4120";
+	dataNumbers = "4120,555-0157";
 }
 
 ostream& operator<<(ostream& os, const Options* obj){

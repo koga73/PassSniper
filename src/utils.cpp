@@ -1,23 +1,24 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <regex>
 
 #include "utils.h"
 
 using namespace std;
 
-vector<string>* Utils::split(const string s){
+vector<string> Utils::split(const string s){
 	return split(s, ',');
 }
-vector<string>* Utils::split(const string s, const char delim){
-	vector<string>* ret = new vector<string>();
+vector<string> Utils::split(const string s, const char delim){
+	vector<string> ret;
 
 	//to avoid modifying original string
     //first duplicate the original string and return a char pointer then free the memory
     char * dup = strdup(s.c_str());
     char * token = strtok(dup, &delim);
     while(token != NULL){
-        ret->push_back(string(token));
+        ret.push_back(string(token));
         //the call is treated as a subsequent calls to strtok:
         //the function continues from where it left in previous invocation
         token = strtok(NULL, &delim);
@@ -26,8 +27,15 @@ vector<string>* Utils::split(const string s, const char delim){
 
 	return ret;
 }
+vector<string> Utils::split(const string s, const regex re){
+    vector<string> container = {
+        sregex_token_iterator(s.begin(), s.end(), re, -1),
+        sregex_token_iterator()
+    };
+    return container;
+}
 
-void Utils::concat(vector<string>*& vecA, vector<string>*& vecB){
-    vecA->reserve(vecA->size() + vecB->size());
-    vecA->insert(vecA->end(), vecB->begin(), vecB->end());
+void Utils::concat(vector<string>& vecA, vector<string>& vecB){
+    vecA.reserve(vecA.size() + vecB.size());
+    vecA.insert(vecA.end(), vecB.begin(), vecB.end());
 }

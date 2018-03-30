@@ -4,6 +4,13 @@
         "ostream": "cpp",
         "*.tcc": "cpp",
         "fstream": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "array": "cpp",
+        "bitset": "cpp",
+        "utility": "cpp",
+        "cctype": "cpp",
+        "cstdio": "cpp",
+        "cwchar": "cpp",
+        "cwctype": "cpp"
     }
 }

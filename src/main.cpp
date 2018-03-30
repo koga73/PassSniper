@@ -1,6 +1,7 @@
 #include <iostream>
 #include <conio.h>
 #include <vector>
+#include <regex>
 
 #include "options.h"
 #include "filebuffer.h"
@@ -151,7 +152,7 @@ Options* getOptions(){
 
     //Numbers
     cout << endl;
-    cout << "Significant Numbers (Optional)(Comma Separated)(555-5555)" << endl;
+    cout << "Significant Numbers (Optional)(Comma Separated)(555-0157)" << endl;
     if (options->dataIsIndividual){
         cout << "                    (Favorite,Street,Phone,Other)" << endl;
     }
@@ -179,27 +180,34 @@ Options* getOptions(){
 }
 
 void generate(Options*& options, FileBuffer*& fb){
-    vector<string>* names = Utils::split(options->dataNames);
-    vector<string>* keywords = Utils::split(options->dataKeywords);
-    vector<string>* dates = Utils::split(options->dataDates);
-    vector<string>* numbers = Utils::split(options->dataNumbers);
+    vector<string> names = Utils::split(options->dataNames);
+    vector<string> keywords = Utils::split(options->dataKeywords);
+    vector<string> dates = Utils::split(options->dataDates);
+    vector<string> numbers = Utils::split(options->dataNumbers);
 
-    vector<string>* smartDates = new vector<string>();
-    int datesLen = dates->size();
+    vector<string> smartDates;
+    int datesLen = dates.size();
     for (int i = 0; i < datesLen; i++){
-        vector<string>* splitDates = Utils::split(dates->at(i), '-');
+        vector<string> splitDates = Utils::split(dates.at(i), '-');
         Utils::concat(smartDates, splitDates);
     }
 
-    vector<string>*combined = new vector<string>();
+    vector<string> smartNumbers;
+    int numbersLen = numbers.size();
+    for (int i = 0; i < numbersLen; i++){
+        vector<string> splitNumbers = Utils::split(numbers.at(i), regex("\\D"));
+        Utils::concat(smartNumbers, splitNumbers);
+    }
+
+    vector<string> combined;
     Utils::concat(combined, names);
     Utils::concat(combined, keywords);
     Utils::concat(combined, smartDates);
-    Utils::concat(combined, numbers);
+    Utils::concat(combined, smartNumbers);
 
-    int combinedLen = combined->size();
+    int combinedLen = combined.size();
     for (int i = 0; i < combinedLen; i++){
-        fb->addLine(combined->at(i));
+        fb->addLine(combined.at(i));
     }
     fb->flush();
 }

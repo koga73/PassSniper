@@ -58,7 +58,8 @@
                 "_DEBUG",
                 "UNICODE",
                 "__GNUC__=6",
-                "__cdecl=__attribute__((__cdecl__))"
+                "__cdecl=__attribute__((__cdecl__))",
+                "__SIZE_TYPE__=long long unsigned int"
             ],
             "browse": {
                 "path": [
