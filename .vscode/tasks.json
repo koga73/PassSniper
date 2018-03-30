@@ -6,12 +6,12 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "g++",
             "options": {
                 "cwd": "${workspaceRoot}"
             },
+            "command": "g++",
             "args": [
-                "-g", "src/main.cpp",
+                "-g", "src/*.cpp",
                 "-o", "bin/passsniper.exe"
             ],
             "group": {
@@ -19,9 +19,11 @@
                 "isDefault": true
             },
             "presentation": {
-                "echo": true
-            },
-            "showOutput": "always"
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
         }
     ]
 }

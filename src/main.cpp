@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <conio.h>
 
 #include "options.h"
@@ -18,11 +19,14 @@ int main(int argc, char **argv){
     cout << " / ____/ /_/ (__  |__  )___/ / / / / / /_/ /  __/ /    " << endl;
     cout << "/_/    \\__,_/____/____//____/_/ /_/_/ .___/\\___/_/     " << endl;
     cout << "                                   /_/                 " << endl;
-    cout << "v1.0.0 - AJ Savino" << endl;
-    cout << endl;
     cout << "Generating better quality wordlists for pentesting" << endl;
     cout << endl;
+    cout << "PassSniper v1.0.0 - AJ Savino" << endl;
+    cout << "CLI Usage: passsniper [outputfile]" << endl;
     cout << endl;
+    cout << endl;
+
+    //Warning
     cout << "Think before using... don't be a dick." << endl;
     char key;
     do {
@@ -32,23 +36,50 @@ int main(int argc, char **argv){
             exit(0);
         }
     } while (key != 13);
+
+    //Verify output file
+    string outputFile = "./output.txt";
+    if (argc == 2){
+        outputFile = argv[1];
+    }
+    outputFile = getString(outputFile, "Output File");
+    ofstream ofs;
+    try {
+        if (!outputFile.length()){
+            throw "Undefined output file.";
+        }
+        ofs.open(outputFile, ios::out | ios::app); //Open file for output and append to eof
+        if (!ofs || !ofs.is_open()){
+            throw "There was an error opening the output file.";
+        }
+        ofs.close();
+    } catch (const char* ex){
+        cout << ex << " Exiting." << endl;
+
+        system("PAUSE");
+        return 1;
+    }
     
+    //Get user options
     Options* options = getOptions();
     cout << endl << options << endl;
 
     system("PAUSE");
+    return 0;
 }
 
 Options* getOptions(){
     Options* options = new Options();
 
     //Target
+    bool isDemo;
     bool isIndividual;
     bool isOrganization;
     do {
         string target;
         cout << endl;
         cout << "Select wordlist generation target:" << endl;
+        cout << "  [0] Demo - Organization" << endl;
         cout << "  [1] Invididual" << endl;
         cout << "  [2] Organization" << endl;
         cout << ":";
@@ -56,24 +87,29 @@ Options* getOptions(){
         cin.sync();
         getline(cin, target);
 
+        isDemo = target == "0";
         isIndividual = target == "1";
         isOrganization = target == "2";
-        if (isIndividual || isOrganization){
+        if (isDemo || isIndividual || isOrganization){
             break;
         } else {
-            cout << endl << "Please type [1] or [2] and press [ENTER]" << endl;
+            cout << endl << "Please type '0', '1' or '2' and press [ENTER]" << endl;
         }
     } while (true);
+    if (isDemo){
+        options->demoOrganization();
+        return options;
+    }
     options->dataIsIndividual = isIndividual;
     options->dataIsOrganization = isOrganization;
 
     //Names
     cout << endl;
     cout << "Names (Optional)(Comma Separated)" << endl;
-    if (isIndividual){
+    if (options->dataIsIndividual){
         cout << "      (Pets,Children,Spouse,Other)" << endl;
     }
-    if (isOrganization){
+    if (options->dataIsOrganization){
         cout << "      (Company,Street,Other)" << endl;
     }
     options->dataNames = getString();
@@ -81,10 +117,10 @@ Options* getOptions(){
     //Keywords
     cout << endl;
     cout << "Keywords (Optional)(Comma Separated)" << endl;
-    if (isIndividual){
+    if (options->dataIsIndividual){
         cout << "         (Sports,Teams,Animals,Interests,Other)" << endl;
     }
-    if (isOrganization){
+    if (options->dataIsOrganization){
         cout << "         (Mascot,Products,Other)" << endl;
     }
     options->dataKeywords = getString();
@@ -92,10 +128,10 @@ Options* getOptions(){
     //Dates
     cout << endl;
     cout << "Significant Dates (Optional)(Comma Separated)(mm-dd-yyyy)" << endl;
-    if (isIndividual){
+    if (options->dataIsIndividual){
         cout << "                  (Anniversary,Birthdays,Other)" << endl;
     }
-    if (isOrganization){
+    if (options->dataIsOrganization){
         cout << "                  (Founded,Other)" << endl;
     }
     options->dataDates = getString();
@@ -103,22 +139,28 @@ Options* getOptions(){
     //Numbers
     cout << endl;
     cout << "Significant Numbers (Optional)(Comma Separated)(555-5555)" << endl;
-    if (isIndividual){
+    if (options->dataIsIndividual){
         cout << "                    (Favorite,Street,Phone,Other)" << endl;
     }
-    if (isOrganization){
+    if (options->dataIsOrganization){
         cout << "                    (Street,Phone,ID,Other)" << endl;
     }
     options->dataNumbers = getString();
 
-    options->ksMin = getNum(7, "Keyspace - Minimum Length");
-    options->ksMax = getNum(15, "Keyspace - Maximum Length");
-    options->ksUseLower = getBool(true, "Keyspace - Lowercase");
-    options->ksUseUpper = getBool(true, "Keyspace - Uppercase");
-    options->ksUseNum = getBool(true, "Keyspace - Numbers");
-    options->optLeet = getBool(true, "Option - Leet Substitution (Example 'e' > '3')");
-    options->optPrepend = getString("!,#,$,1,123", "Option - Prepend Sequences (Comma Separated)");
-    options->optAppend = getString("!,#,$,1,123", "Option - Append Sequences (Comma Separated)");
+    options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
+    options->ksMax = getNum(Options::DEFAULT_KS_MAX, "Keyspace - Maximum Length");
+    options->ksUseLower = getBool(Options::DEFAULT_KS_USE_LOWER, "Keyspace - Lowercase");
+    options->ksUseUpper = getBool(Options::DEFAULT_KS_USE_UPPER, "Keyspace - Uppercase");
+    options->ksUseNum = getBool(Options::DEFAULT_KS_USE_NUM, "Keyspace - Numbers");
+    options->optLeet = getBool(Options::DEFAULT_OPT_LEET, "Option - Leet Substitution (Example 'e' > '3')");
+    options->optUsePrepend = getBool(Options::DEFAULT_OPT_USE_PREPEND, "Option - Prepend sequences (Example 'password' > '123password')");
+    if (options->optUsePrepend){
+        options->optPrepend = getString(Options::DEFAULT_OPT_PREPEND, "Option - Prepend Sequences (Comma Separated)");
+    }
+    options->optUseAppend = getBool(Options::DEFAULT_OPT_USE_APPEND, "Option - Append sequences (Example 'password' > 'password123')");
+    if (options->optUseAppend){
+        options->optAppend = getString(Options::DEFAULT_OPT_APPEND, "Option - Append Sequences (Comma Separated)");
+    }
 
     return options;
 }
