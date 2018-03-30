@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const int FileBuffer::MAX_LINES;
+const int FileBuffer::BUFFER_SIZE;
 
 FileBuffer::FileBuffer(string fileName){
 	this->fileName = fileName;
@@ -24,14 +24,17 @@ bool FileBuffer::test(){
 }
 
 void FileBuffer::addLine(string line){
-	if (lineIndex < 0){ //Empty
+	/*if (lineIndex < 0){ //Empty
 		lineIndex = 0;
-	}
-	lines[lineIndex] = line;
-	lineIndex++;
-	if (lineIndex == MAX_LINES){
+	}*/
+	line += "\n";
+	int lineLen = line.length();
+	linesLen = lines.length();
+	if (linesLen + lineLen >= BUFFER_SIZE){
 		flush();
 	}
+	lines += line;
+	linesLen += lineLen;
 }
 
 void FileBuffer::flush(){
@@ -44,11 +47,8 @@ void FileBuffer::flush(){
 		}
 	}
 	if (isOpen){
-		if (lineIndex >= 0){ //-1 means we are empty
-			int maxLine = min(lineIndex, MAX_LINES);
-			for (int i = 0; i < maxLine; i++){
-				ofs << lines[i] << endl;
-			}
+		if (linesLen >= 0){
+			ofs << lines;
 		}
 	} else {
         throw "There was an error opening the output file.";
@@ -56,7 +56,8 @@ void FileBuffer::flush(){
 	if (!keepOpen){
 		close();
 	}
-	lineIndex = -1;
+	lines = "";
+	linesLen = 0;
 }
 
 void FileBuffer::close(){

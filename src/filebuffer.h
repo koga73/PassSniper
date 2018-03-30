@@ -8,7 +8,7 @@ using namespace std;
 
 class FileBuffer {
 	public:
-		static const int MAX_LINES = 1024 * 512;
+		static const int BUFFER_SIZE = 1024 * 100; //kb
 		
 		FileBuffer(string fileName);
 		FileBuffer(string fileName, bool keepOpen);
@@ -19,10 +19,10 @@ class FileBuffer {
 
 	private:
 		string fileName;
-		bool keepOpen;
-		string lines[MAX_LINES];
-		int lineIndex = -1;
 		bool isOpen;
+		bool keepOpen;
+		string lines;
+		int linesLen;
 		ofstream ofs;
 };
 

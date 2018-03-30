@@ -8,8 +8,8 @@ using namespace std;
 
 class Utils {
 	public:
-		static vector<string>* split(const string csv);
-		static vector<string>* split(const string csv, const char delim);
+		static vector<string>* split(const string s);
+		static vector<string>* split(const string s, const char delim);
 };
 
 #endif
