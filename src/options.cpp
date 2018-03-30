@@ -21,7 +21,7 @@ void Options::demoOrganization(){
 	dataIsOrganization = true;
 	dataNames = "initech";
 	dataKeywords = "tps,swingline";
-	dataDates = "02/19/1999";
+	dataDates = "02-19-1999";
 	dataNumbers = "4120";
 }
 

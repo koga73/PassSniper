@@ -24,9 +24,6 @@ bool FileBuffer::test(){
 }
 
 void FileBuffer::addLine(string line){
-	/*if (lineIndex < 0){ //Empty
-		lineIndex = 0;
-	}*/
 	line += "\n";
 	int lineLen = line.length();
 	linesLen = lines.length();

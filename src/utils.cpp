@@ -26,3 +26,8 @@ vector<string>* Utils::split(const string s, const char delim){
 
 	return ret;
 }
+
+void Utils::concat(vector<string>*& vecA, vector<string>*& vecB){
+    vecA->reserve(vecA->size() + vecB->size());
+    vecA->insert(vecA->end(), vecB->begin(), vecB->end());
+}

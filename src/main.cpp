@@ -1,6 +1,6 @@
 #include <iostream>
-#include <fstream>
 #include <conio.h>
+#include <vector>
 
 #include "options.h"
 #include "filebuffer.h"
@@ -179,8 +179,27 @@ Options* getOptions(){
 }
 
 void generate(Options*& options, FileBuffer*& fb){
-    for (int i = 0; i < 10000000; i++){
-        fb->addLine(to_string(i));
+    vector<string>* names = Utils::split(options->dataNames);
+    vector<string>* keywords = Utils::split(options->dataKeywords);
+    vector<string>* dates = Utils::split(options->dataDates);
+    vector<string>* numbers = Utils::split(options->dataNumbers);
+
+    vector<string>* smartDates = new vector<string>();
+    int datesLen = dates->size();
+    for (int i = 0; i < datesLen; i++){
+        vector<string>* splitDates = Utils::split(dates->at(i), '-');
+        Utils::concat(smartDates, splitDates);
+    }
+
+    vector<string>*combined = new vector<string>();
+    Utils::concat(combined, names);
+    Utils::concat(combined, keywords);
+    Utils::concat(combined, smartDates);
+    Utils::concat(combined, numbers);
+
+    int combinedLen = combined->size();
+    for (int i = 0; i < combinedLen; i++){
+        fb->addLine(combined->at(i));
     }
     fb->flush();
 }
