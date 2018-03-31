@@ -7,8 +7,6 @@
 
 using namespace std;
 
-FileBuffer* fb;
-
 Options* getOptions();
 int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
@@ -47,25 +45,31 @@ int main(int argc, char **argv){
     }
     outputFile = getString(outputFile, "Output File");
 
-    //Test opening file
-    fb = new FileBuffer(outputFile);
-    if (!fb->test()){
-        cout << "Could not open output file. Exiting." << endl;
-        system("PAUSE");
-        return 1;
-    }
-    
-    //Get user options
-    Options* options = getOptions();
-    cout << endl << options << endl;
+    FileBuffer* fb = new FileBuffer(outputFile);
+    Options* options;
+    Generator* gen;
 
     string errorMsg;
     try {
-        Generator::generate(options, fb);
+        //Test file access
+        if (!fb->test()){
+            throw "Could not open output file.";
+        }
+
+        //Get user options
+        options = getOptions();
+        //DEBUG
+        cout << endl << options << endl;
+        
+        //Generate
+        gen = new Generator(options, fb);
+        gen->generate();
     } catch (ios::failure &ex){
         errorMsg = ex.what();
     } catch (const char* ex){
         errorMsg = string(ex);
+    } catch (string ex){
+        errorMsg = ex;
     } catch (...){
         errorMsg = "An error occured.";
     }
@@ -140,7 +144,7 @@ Options* getOptions(){
     cout << endl;
     cout << "Significant Dates (Optional)(Comma Separated)(mm-dd-yyyy)" << endl;
     if (options->dataIsIndividual){
-        cout << "                  (Anniversary,Birthdays,Other)" << endl;
+        cout << "                  (Anniversary,Birthdays,Graduation,Other)" << endl;
     }
     if (options->dataIsOrganization){
         cout << "                  (Founded,Other)" << endl;
@@ -159,7 +163,13 @@ Options* getOptions(){
     options->dataNumbers = getString();
 
     options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
+    if (options->ksMin < Options::KS_MIN || options->ksMin > Options::KS_MAX){
+        throw "Invalid keyspace - minimum length must be between " + to_string(Options::KS_MIN) + " and " + to_string(Options::KS_MAX) + ".";
+    }
     options->ksMax = getNum(Options::DEFAULT_KS_MAX, "Keyspace - Maximum Length");
+    if (options->ksMax < options->ksMin || options->ksMax > Options::KS_MAX){
+        throw "Invalid keyspace - maximum length must be between " + to_string(options->ksMin) + " and " + to_string(Options::KS_MAX) + ".";
+    }
     options->ksUseLower = getBool(Options::DEFAULT_KS_USE_LOWER, "Keyspace - Lowercase");
     options->ksUseUpper = getBool(Options::DEFAULT_KS_USE_UPPER, "Keyspace - Uppercase");
     options->ksUseNum = getBool(Options::DEFAULT_KS_USE_NUM, "Keyspace - Numbers");

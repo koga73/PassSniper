@@ -5,6 +5,9 @@ using namespace std;
 
 class Options {
 	public:
+		static const int KS_MIN;
+		static const int KS_MAX;
+
 		static const int DEFAULT_KS_MIN;
 		static const int DEFAULT_KS_MAX;
 		static const bool DEFAULT_KS_USE_UPPER;

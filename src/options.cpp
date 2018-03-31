@@ -4,6 +4,9 @@
 
 using namespace std;
 
+const int Options::KS_MIN = 1;
+const int Options::KS_MAX = 255;
+
 const int Options::DEFAULT_KS_MIN = 7;
 const int Options::DEFAULT_KS_MAX = 15;
 const bool Options::DEFAULT_KS_USE_UPPER = true;

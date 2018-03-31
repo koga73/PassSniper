@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <string>
 #include <regex>
@@ -7,7 +8,10 @@
 
 using namespace std;
 
-void Generator::generate(Options*& options, FileBuffer*& fb){
+Generator::Generator(Options*& options, FileBuffer*& fb) : options(options), fb(fb) {}
+
+void Generator::generate(){
+	int i;
     vector<string> names = Utils::split(options->dataNames);
     vector<string> keywords = Utils::split(options->dataKeywords);
     vector<string> dates = Utils::split(options->dataDates);
@@ -15,7 +19,7 @@ void Generator::generate(Options*& options, FileBuffer*& fb){
 
     vector<string> smartDates;
     int datesLen = dates.size();
-    for (int i = 0; i < datesLen; i++){
+    for (i = 0; i < datesLen; i++){
         vector<string> splitDates = Utils::split(dates.at(i), '-');
         Utils::concat(smartDates, splitDates);
     }
@@ -23,7 +27,7 @@ void Generator::generate(Options*& options, FileBuffer*& fb){
     //Strip out non-numerics
     //Create entry without leading 0s
     int smartDatesLen = smartDates.size();
-    for (int i = 0; i < smartDatesLen; i++){
+    for (i = 0; i < smartDatesLen; i++){
         string snum = smartDates.at(i);
         if (snum.length() == 4){ //Create 2 digit year
             smartDates.push_back(snum.substr(2, 2));
@@ -47,20 +51,49 @@ void Generator::generate(Options*& options, FileBuffer*& fb){
 
     vector<string> smartNumbers;
     int numbersLen = numbers.size();
-    for (int i = 0; i < numbersLen; i++){
+    for (i = 0; i < numbersLen; i++){
         vector<string> splitNumbers = Utils::split(numbers.at(i), regex("\\D"));
         Utils::concat(smartNumbers, splitNumbers);
     }
 
-    vector<string> combined;
-    Utils::concat(combined, names);
-    Utils::concat(combined, keywords);
-    Utils::concat(combined, smartDates);
-    Utils::concat(combined, smartNumbers);
+    Utils::concat(words, names);
+    Utils::concat(words, keywords);
+    Utils::concat(words, smartDates);
+    Utils::concat(words, smartNumbers);
 
-    int combinedLen = combined.size();
-    for (int i = 0; i < combinedLen; i++){
-        fb->addLine(combined.at(i));
+    int wordsLen = words.size();
+    for (i = 0; i < wordsLen; i++){
+        fb->addLine(words.at(i));
     }
     fb->flush();
+}
+
+//Filter duplicates and too long
+void Generator::filter(){
+
+}
+
+//Build case variations
+void Generator::cases(){
+
+}
+
+//Combine words to fill keyspace
+void Generator::combine(){
+
+}
+
+//Leet substitution
+void Generator::leet(){
+
+}
+
+//Prepend sequences
+void Generator::prepend(){
+
+}
+
+//Append sequences
+void Generator::append(){
+
 }
