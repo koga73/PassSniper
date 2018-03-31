@@ -191,6 +191,31 @@ void generate(Options*& options, FileBuffer*& fb){
         vector<string> splitDates = Utils::split(dates.at(i), '-');
         Utils::concat(smartDates, splitDates);
     }
+    //Create 2 digit year from 4
+    //Strip out non-numerics
+    //Create entry without leading 0s
+    int smartDatesLen = smartDates.size();
+    for (int i = 0; i < smartDatesLen; i++){
+        string snum = smartDates.at(i);
+        if (snum.length() == 4){ //Create 2 digit year
+            smartDates.push_back(snum.substr(2, 2));
+        }
+        int num = -1;
+        try {
+            num = stoi(snum);
+        } catch (exception ex){
+            smartDates.erase(smartDates.begin() + i);
+            smartDatesLen--;
+            i--;
+        }
+        if (num == -1){
+            continue;
+        }
+        string shortNum = to_string(num);
+        if (shortNum != snum){ //Leading 0s
+            smartDates.push_back(shortNum);
+        }
+    }
 
     vector<string> smartNumbers;
     int numbersLen = numbers.size();
