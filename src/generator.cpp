@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <regex>
+#include <algorithm>
 
 #include "generator.h"
 #include "utils.h"
@@ -12,32 +13,30 @@ Generator::Generator(Options*& options, FileBuffer*& fb) : options(options), fb(
 
 void Generator::generate(){
 	int i;
-    vector<string> names = Utils::split(options->dataNames);
-    vector<string> keywords = Utils::split(options->dataKeywords);
-    vector<string> dates = Utils::split(options->dataDates);
-    vector<string> numbers = Utils::split(options->dataNumbers);
+    regex regexCommaWhiteSpace = regex("[,\\s]");
+    regex regexNonNumeric = regex("\\D");
 
-    vector<string> smartDates;
-    int datesLen = dates.size();
-    for (i = 0; i < datesLen; i++){
-        vector<string> splitDates = Utils::split(dates.at(i), '-');
-        Utils::concat(smartDates, splitDates);
-    }
+    vector<string> names = Utils::split(options->dataNames, regexCommaWhiteSpace);
+    vector<string> keywords = Utils::split(options->dataKeywords, regexCommaWhiteSpace);
+    vector<string> dates = Utils::split(options->dataDates, regexNonNumeric);
+    vector<string> numbers = Utils::split(options->dataNumbers, regexNonNumeric);
+
+    //Smart dates
     //Create 2 digit year from 4
     //Strip out non-numerics
     //Create entry without leading 0s
-    int smartDatesLen = smartDates.size();
-    for (i = 0; i < smartDatesLen; i++){
-        string snum = smartDates.at(i);
+    int datesLen = dates.size();
+    for (i = 0; i < datesLen; i++){
+        string snum = dates.at(i);
         if (snum.length() == 4){ //Create 2 digit year
-            smartDates.push_back(snum.substr(2, 2));
+            dates.push_back(snum.substr(2, 2));
         }
         int num = -1;
         try {
             num = stoi(snum);
         } catch (exception ex){
-            smartDates.erase(smartDates.begin() + i);
-            smartDatesLen--;
+            dates.erase(dates.begin() + i);
+            datesLen--;
             i--;
         }
         if (num == -1){
@@ -45,32 +44,59 @@ void Generator::generate(){
         }
         string shortNum = to_string(num);
         if (shortNum != snum){ //Leading 0s
-            smartDates.push_back(shortNum);
+            dates.push_back(shortNum);
         }
-    }
-
-    vector<string> smartNumbers;
-    int numbersLen = numbers.size();
-    for (i = 0; i < numbersLen; i++){
-        vector<string> splitNumbers = Utils::split(numbers.at(i), regex("\\D"));
-        Utils::concat(smartNumbers, splitNumbers);
     }
 
     Utils::concat(words, names);
     Utils::concat(words, keywords);
-    Utils::concat(words, smartDates);
-    Utils::concat(words, smartNumbers);
+    Utils::concat(words, dates);
+    Utils::concat(words, numbers);
+
+    filter();
 
     int wordsLen = words.size();
     for (i = 0; i < wordsLen; i++){
+        cout << words.at(i) << endl;
         fb->addLine(words.at(i));
     }
     fb->flush();
 }
 
-//Filter duplicates and too long
+//Empty
+//Too long
+//Contains number if numeric not specified
+//Duplicates
 void Generator::filter(){
+    regex regexNumeric = regex("\\d");
 
+    int wordsLen = words.size();
+    for (int i = 0; i < wordsLen; i++){
+        bool shouldRemove = false;
+        string word = words.at(i);
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
+        if (!word.size() || word.size() > options->ksMax){
+            shouldRemove = true;
+        }
+        if (!options->ksUseNum && regex_search(word, regexNumeric)){
+            shouldRemove = true;
+        }
+        if (!shouldRemove){
+            for (int j = i + 1; j < wordsLen; j++){
+                string word2 = words.at(j);
+                transform(word2.begin(), word2.end(), word2.begin(), ::tolower);
+                if (word == word2){
+                    shouldRemove = true;
+                    break;
+                }
+            }
+        }
+        if (shouldRemove){
+            words.erase(words.begin() + i);
+            wordsLen--;
+            i--;
+        }
+    }
 }
 
 //Build case variations

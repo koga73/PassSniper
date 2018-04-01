@@ -21,12 +21,12 @@ class Options {
 		static const string DEFAULT_OPT_APPEND;
 
 		//Data
-		bool dataIsIndividual;
-		bool dataIsOrganization;
-		string dataNames;
-		string dataKeywords;
-		string dataDates;
-		string dataNumbers;
+		bool dataIsIndividual = false;
+		bool dataIsOrganization = false;
+		string dataNames = "";
+		string dataKeywords = "";
+		string dataDates = "";
+		string dataNumbers = "";
 		
 		//Keyspace
 		int ksMin = DEFAULT_KS_MIN;

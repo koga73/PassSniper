@@ -18,11 +18,11 @@ class FileBuffer {
 		void close();
 
 	private:
-		string fileName;
-		bool isOpen;
-		bool keepOpen;
-		string lines;
-		int linesLen;
+		string fileName = "";
+		bool keepOpen = false;
+		bool isOpen = false;
+		string lines = "";
+		int linesLen = 0;
 		ofstream ofs;
 };
 
