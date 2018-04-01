@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <regex>
 
 #include "filebuffer.h"
 #include "options.h"
@@ -15,6 +16,12 @@ class Generator {
 		void generate();
 		
 	private:
+		static const regex REGEX_COMMA_WHITESPACE;
+		static const regex REGEX_NON_NUMERIC;
+		static const regex REGEX_NUMERIC;
+		static const regex REGEX_LOWERCASE;
+		static const regex REGEX_UPPERCASE;
+
 		Options*& options;
 		FileBuffer*& fb;
 		vector<string> words;

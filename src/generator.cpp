@@ -9,17 +9,20 @@
 
 using namespace std;
 
+const regex Generator::REGEX_COMMA_WHITESPACE = regex("[,\\s]");
+const regex Generator::REGEX_NON_NUMERIC = regex("\\D");
+const regex Generator::REGEX_NUMERIC = regex("\\d");
+const regex Generator::REGEX_LOWERCASE = regex("[a-z]");
+const regex Generator::REGEX_UPPERCASE = regex("[A-Z]");
+
 Generator::Generator(Options*& options, FileBuffer*& fb) : options(options), fb(fb) {}
 
 void Generator::generate(){
 	int i;
-    regex regexCommaWhiteSpace = regex("[,\\s]");
-    regex regexNonNumeric = regex("\\D");
-
-    vector<string> names = Utils::split(options->dataNames, regexCommaWhiteSpace);
-    vector<string> keywords = Utils::split(options->dataKeywords, regexCommaWhiteSpace);
-    vector<string> dates = Utils::split(options->dataDates, regexNonNumeric);
-    vector<string> numbers = Utils::split(options->dataNumbers, regexNonNumeric);
+    vector<string> names = Utils::split(options->dataNames, REGEX_COMMA_WHITESPACE);
+    vector<string> keywords = Utils::split(options->dataKeywords, REGEX_COMMA_WHITESPACE);
+    vector<string> dates = Utils::split(options->dataDates, REGEX_NON_NUMERIC);
+    vector<string> numbers = Utils::split(options->dataNumbers, REGEX_NON_NUMERIC);
 
     //Smart dates
     //Create 2 digit year from 4
@@ -54,6 +57,7 @@ void Generator::generate(){
     Utils::concat(words, numbers);
 
     filter();
+    cases();
 
     int wordsLen = words.size();
     for (i = 0; i < wordsLen; i++){
@@ -65,22 +69,24 @@ void Generator::generate(){
 
 //Empty
 //Too long
-//Contains number if numeric not specified
+//Contains number if not specified
 //Duplicates
 void Generator::filter(){
-    regex regexNumeric = regex("\\d");
-
     int wordsLen = words.size();
     for (int i = 0; i < wordsLen; i++){
         bool shouldRemove = false;
         string word = words.at(i);
         transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+        //Empty / Too long
         if (!word.size() || word.size() > options->ksMax){
             shouldRemove = true;
         }
-        if (!options->ksUseNum && regex_search(word, regexNumeric)){
+        //Contains number if not specified
+        if (!shouldRemove && !options->ksUseNum && regex_search(word, REGEX_NUMERIC)){
             shouldRemove = true;
         }
+        //Duplicates
         if (!shouldRemove){
             for (int j = i + 1; j < wordsLen; j++){
                 string word2 = words.at(j);
@@ -91,6 +97,7 @@ void Generator::filter(){
                 }
             }
         }
+
         if (shouldRemove){
             words.erase(words.begin() + i);
             wordsLen--;
@@ -101,7 +108,60 @@ void Generator::filter(){
 
 //Build case variations
 void Generator::cases(){
+    int wordsLen = words.size();
+    for (int i = 0; i < wordsLen; i++){
+        string word = words.at(i);
 
+        //Check state of current word and remove if not supported
+        bool shouldRemove = false;
+        if (!options->ksUseLower && regex_search(word, REGEX_LOWERCASE)){
+            shouldRemove = true;
+        }
+        if (!options->ksUseUpper && regex_search(word, REGEX_UPPERCASE)){
+            shouldRemove = true;
+        }
+        if (shouldRemove){
+            words.erase(words.begin() + i);
+            wordsLen--;
+            i--;
+        }
+
+        //Lowercase
+        if (options->ksUseLower){
+            string lowerCase = word;
+            transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), ::tolower);
+            if (lowerCase != word){
+                words.insert(words.begin() + i + 1, lowerCase);
+                i++;
+                wordsLen++;
+            }
+        }
+
+        //Uppercase
+        if (options->ksUseUpper){
+            string upperCase = word;
+            transform(upperCase.begin(), upperCase.end(), upperCase.begin(), ::toupper);
+            if (upperCase != word){
+                words.insert(words.begin() + i + 1, upperCase);
+                i++;
+                wordsLen++;
+            }
+        }
+
+        //Sentence case
+        if (options->ksUseLower && options->ksUseUpper){
+            string sentenceCase = word;
+            transform(sentenceCase.begin(), sentenceCase.end(), sentenceCase.begin(), ::tolower);
+            string firstLetter = sentenceCase.substr(0, 1);
+            transform(firstLetter.begin(), firstLetter.end(), firstLetter.begin(), ::toupper);
+            sentenceCase = firstLetter + sentenceCase.substr(1, sentenceCase.length() - 1);
+            if (sentenceCase != word){
+                words.insert(words.begin() + i + 1, sentenceCase);
+                i++;
+                wordsLen++;
+            }
+        }
+    }
 }
 
 //Combine words to fill keyspace
