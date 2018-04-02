@@ -58,12 +58,13 @@ void Generator::generate(){
 
     filter();
     cases();
+    combine();
 
-    int wordsLen = words.size();
+    /*int wordsLen = words.size();
     for (i = 0; i < wordsLen; i++){
         cout << words.at(i) << endl;
         fb->addLine(words.at(i));
-    }
+    }*/
     fb->flush();
 }
 
@@ -166,7 +167,29 @@ void Generator::cases(){
 
 //Combine words to fill keyspace
 void Generator::combine(){
+    combine("");
+}
+void Generator::combine(string currentWord){
+    int wordsLen = words.size();
+    for (int i = 0; i < wordsLen; i++){
+        string newWord = currentWord + words.at(i);
+        int newWordLen = newWord.length();
 
+        string lastBit = newWord.substr(max(newWordLen - options->optMaxCombinedNums - 1, 0));
+        if (lastBit.length() == options->optMaxCombinedNums + 1 && Utils::is_number(lastBit)){ //isNumeric
+            continue;
+        }
+        if (newWordLen <= options->ksMax){
+            if (newWordLen >= options->ksMin){
+                //TODO: Move to local function with logging per flush
+                //TODO: Count number of lines
+                fb->addLine(newWord);
+            }
+            if (newWordLen < options->ksMax){
+                combine(newWord);
+            }
+        }
+    }
 }
 
 //Leet substitution

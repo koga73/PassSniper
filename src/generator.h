@@ -29,6 +29,7 @@ class Generator {
 		void filter();
 		void cases();
 		void combine();
+		void combine(string currentWord);
 		void leet();
 		void prepend();
 		void append();

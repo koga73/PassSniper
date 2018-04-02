@@ -14,6 +14,7 @@ class Options {
 		static const bool DEFAULT_KS_USE_LOWER;
 		static const bool DEFAULT_KS_USE_NUM;
 
+		static const int DEFAULT_OPT_MAX_COMBINED_NUMS;
 		static const bool DEFAULT_OPT_LEET;
 		static const bool  DEFAULT_OPT_USE_PREPEND;
 		static const string DEFAULT_OPT_PREPEND;
@@ -36,6 +37,7 @@ class Options {
 		bool ksUseNum = DEFAULT_KS_USE_NUM;
 		
 		//Options
+		int optMaxCombinedNums = DEFAULT_OPT_MAX_COMBINED_NUMS;
 		bool optLeet = DEFAULT_OPT_LEET;
 		bool optUsePrepend = DEFAULT_OPT_USE_PREPEND;
 		string optPrepend = DEFAULT_OPT_PREPEND;

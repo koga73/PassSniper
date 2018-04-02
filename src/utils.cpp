@@ -39,3 +39,9 @@ void Utils::concat(vector<string>& vecA, vector<string>& vecB){
     vecA.reserve(vecA.size() + vecB.size());
     vecA.insert(vecA.end(), vecB.begin(), vecB.end());
 }
+
+bool Utils::is_number(const string& s){
+    return !s.empty() && find_if(s.begin(), s.end(), [](char c){
+        return !isdigit(c);
+    }) == s.end();
+}

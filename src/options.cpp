@@ -13,6 +13,7 @@ const bool Options::DEFAULT_KS_USE_UPPER = true;
 const bool Options::DEFAULT_KS_USE_LOWER = true;
 const bool Options::DEFAULT_KS_USE_NUM = true;
 
+const int Options::DEFAULT_OPT_MAX_COMBINED_NUMS = 4;
 const bool Options::DEFAULT_OPT_LEET = true;
 const bool Options::DEFAULT_OPT_USE_PREPEND = true;
 const string Options::DEFAULT_OPT_PREPEND = "!,#,$,1,123";
@@ -46,6 +47,7 @@ ostream& operator<<(ostream& os, const Options* obj){
 	"ksUseNum: " << obj->ksUseNum << endl <<
 	
 	//Options
+	"optMaxCombinedNums: " << obj->optMaxCombinedNums << endl <<
 	"optLeet: " << obj->optLeet << endl <<
 	"optUsePrepend: " << obj->optUsePrepend << endl <<
 	"optPrepend: " << obj->optPrepend << endl <<
