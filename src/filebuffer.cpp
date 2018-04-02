@@ -23,15 +23,21 @@ bool FileBuffer::test(){
     return false;
 }
 
-void FileBuffer::addLine(string line){
+//Returns true if flushed
+bool FileBuffer::addLine(string line){
+	bool flushed = false;
+
 	line += "\n";
 	int lineLen = line.length();
 	linesLen = lines.length();
 	if (linesLen + lineLen >= BUFFER_SIZE){
 		flush();
+		flushed = true;
 	}
 	lines += line;
 	linesLen += lineLen;
+
+	return flushed;
 }
 
 void FileBuffer::flush(){

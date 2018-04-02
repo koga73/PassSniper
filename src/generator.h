@@ -25,6 +25,7 @@ class Generator {
 		Options*& options;
 		FileBuffer*& fb;
 		vector<string> words;
+		int wordCount = 0;
 		
 		void filter();
 		void cases();
@@ -33,6 +34,7 @@ class Generator {
 		void leet();
 		void prepend();
 		void append();
+		void addLine(string line);
 };
 
 #endif

@@ -8,7 +8,7 @@ const int Options::KS_MIN = 1;
 const int Options::KS_MAX = 255;
 
 const int Options::DEFAULT_KS_MIN = 7;
-const int Options::DEFAULT_KS_MAX = 15;
+const int Options::DEFAULT_KS_MAX = 12;
 const bool Options::DEFAULT_KS_USE_UPPER = true;
 const bool Options::DEFAULT_KS_USE_LOWER = true;
 const bool Options::DEFAULT_KS_USE_NUM = true;
@@ -16,9 +16,9 @@ const bool Options::DEFAULT_KS_USE_NUM = true;
 const int Options::DEFAULT_OPT_MAX_COMBINED_NUMS = 4;
 const bool Options::DEFAULT_OPT_LEET = true;
 const bool Options::DEFAULT_OPT_USE_PREPEND = true;
-const string Options::DEFAULT_OPT_PREPEND = "!,#,$,1,123";
+const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1,123";
 const bool Options::DEFAULT_OPT_USE_APPEND = true;
-const string Options::DEFAULT_OPT_APPEND = "!,#,$,1,123";
+const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1";
 
 void Options::demoOrganization(){
 	dataIsIndividual = false;

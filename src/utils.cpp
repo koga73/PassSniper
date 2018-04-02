@@ -40,8 +40,18 @@ void Utils::concat(vector<string>& vecA, vector<string>& vecB){
     vecA.insert(vecA.end(), vecB.begin(), vecB.end());
 }
 
-bool Utils::is_number(const string& s){
+bool Utils::isNumeric(const string& s){
     return !s.empty() && find_if(s.begin(), s.end(), [](char c){
         return !isdigit(c);
     }) == s.end();
+}
+
+string Utils::formatCommas(const string& s){
+    string formatted = s;
+    int insertPosition = formatted.length() - 3;
+    while (insertPosition > 0) {
+        formatted.insert(insertPosition, ",");
+        insertPosition -= 3;
+    }
+    return formatted;
 }

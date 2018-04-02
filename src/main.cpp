@@ -75,10 +75,12 @@ int main(int argc, char **argv){
     }
     if (errorMsg.length()){
         cout << errorMsg << " Exiting." << endl;
+        cout << endl;
         system("PAUSE");
         return 1;
     }
     
+    cout << endl;
     system("PAUSE");
     return 0;
 }
@@ -117,6 +119,8 @@ Options* getOptions(){
     }
     options->dataIsIndividual = isIndividual;
     options->dataIsOrganization = isOrganization;
+
+    cout << endl << "LESS is MORE! Filling in everything will generate MILLIONS of combinations" << endl;
 
     //Names
     cout << endl;
@@ -161,6 +165,8 @@ Options* getOptions(){
         cout << "                    (Street,Phone,ID,Other)" << endl;
     }
     options->dataNumbers = getString();
+
+    cout << endl << "Keyspace and Options... if you're unsure just press enter to use the default value" << endl;
 
     options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
     if (options->ksMin < Options::KS_MIN || options->ksMin > Options::KS_MAX){

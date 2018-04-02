@@ -12,7 +12,8 @@ class Utils {
 		static vector<string> split(const string s, const char delim);
 		static vector<string> split(const string s, const regex re);
 		static void concat(vector<string>& vecA, vector<string>& vecB);
-		static bool is_number(const string& s);
+		static bool isNumeric(const string& s);
+		static string formatCommas(const string& s);
 };
 
 #endif
