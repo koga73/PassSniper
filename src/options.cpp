@@ -16,9 +16,9 @@ const bool Options::DEFAULT_KS_USE_NUM = true;
 const int Options::DEFAULT_OPT_MAX_COMBINED_NUMS = 4;
 const bool Options::DEFAULT_OPT_LEET = true;
 const bool Options::DEFAULT_OPT_USE_PREPEND = true;
-const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1,123";
+const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1";
 const bool Options::DEFAULT_OPT_USE_APPEND = true;
-const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1";
+const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1,123";
 
 void Options::demoOrganization(){
 	dataIsIndividual = false;

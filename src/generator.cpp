@@ -176,7 +176,7 @@ void Generator::cases(){
 void Generator::combine(){
     combine("");
 }
-void Generator::combine(string currentWord){
+void Generator::combine(const string& currentWord){
     int wordsLen = words.size();
     for (int i = 0; i < wordsLen; i++){
         string newWord = currentWord + words.at(i);
@@ -189,6 +189,7 @@ void Generator::combine(string currentWord){
         if (newWordLen <= options->ksMax){
             if (newWordLen >= options->ksMin){
                 addLine(newWord);
+                addSequences(newWord);
             }
             if (newWordLen < options->ksMax){
                 combine(newWord);
@@ -202,14 +203,50 @@ void Generator::leet(){
 
 }
 
-//Prepend sequences
-void Generator::prepend(){
+//Prepend/Append sequences
+void Generator::addSequences(const string& word){
+    if (word.length() == options->ksMax){
+        return;
+    }
+    int i;
+    string newWord;
 
-}
+    vector<string> prependSequences;
+    int prependSequencesLen;    
+    if (options->optUsePrepend){
+        prependSequences = Utils::split(options->optPrepend);
+        prependSequencesLen = prependSequences.size();
+        for (i = 0; i < prependSequencesLen; i++){
+            newWord = prependSequences.at(i) + word;
+            if (newWord.length() <= options->ksMax){
+                fb->addLine(newWord);
+            }
+        }
+    }
 
-//Append sequences
-void Generator::append(){
+    vector<string> appendSequences;
+    int appendSequencesLen;
+    if (options->optUseAppend){
+        appendSequences = Utils::split(options->optAppend);
+        appendSequencesLen = appendSequences.size();
+        for (i = 0; i < appendSequencesLen; i++){
+            newWord = word + appendSequences.at(i);
+            if (newWord.length() <= options->ksMax){
+                fb->addLine(newWord);
+            }
+        }
+    }
 
+    if (options->optUsePrepend && options->optUseAppend){
+        for (i = 0; i < prependSequencesLen; i++){
+            for (int j = 0; j < appendSequencesLen; j++){
+                newWord = prependSequences.at(i) + word + appendSequences.at(j);
+                if (newWord.length() <= options->ksMax){
+                    fb->addLine(newWord);
+                }
+            }
+        }
+    }
 }
 
 void Generator::addLine(string line){

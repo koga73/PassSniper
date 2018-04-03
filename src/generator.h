@@ -34,10 +34,9 @@ class Generator {
 		void filter();
 		void cases();
 		void combine();
-		void combine(string currentWord);
+		void combine(const string& currentWord);
 		void leet();
-		void prepend();
-		void append();
+		void addSequences(const string& word);
 		void addLine(string line);
 };
 
