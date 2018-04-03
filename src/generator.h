@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <regex>
+#include <chrono>
 
 #include "filebuffer.h"
 #include "options.h"
@@ -25,7 +26,10 @@ class Generator {
 		Options*& options;
 		FileBuffer*& fb;
 		vector<string> words;
+		int totalWordCount = 0;
 		int wordCount = 0;
+		chrono::system_clock::time_point beginTime;
+		chrono::system_clock::time_point lastFlush;
 		
 		void filter();
 		void cases();

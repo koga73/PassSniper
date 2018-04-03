@@ -11,6 +11,7 @@
         "cctype": "cpp",
         "cstdio": "cpp",
         "cwchar": "cpp",
-        "cwctype": "cpp"
+        "cwctype": "cpp",
+        "chrono": "cpp"
     }
 }

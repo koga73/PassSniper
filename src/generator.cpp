@@ -3,6 +3,8 @@
 #include <string>
 #include <regex>
 #include <algorithm>
+#include <chrono>
+#include <ctime>
 
 #include "generator.h"
 #include "utils.h"
@@ -18,7 +20,10 @@ const regex Generator::REGEX_UPPERCASE = regex("[A-Z]");
 Generator::Generator(Options*& options, FileBuffer*& fb) : options(options), fb(fb) {}
 
 void Generator::generate(){
+    totalWordCount = 0;
     wordCount = 0;
+    beginTime = chrono::system_clock::now();
+    lastFlush = chrono::system_clock::now();
 
 	int i;
     vector<string> names = Utils::split(options->dataNames, REGEX_COMMA_WHITESPACE);
@@ -59,12 +64,15 @@ void Generator::generate(){
     Utils::concat(words, numbers);
 
     filter();
+    Utils::randomize(words);
     cases();
     combine();
     
     fb->flush();
 
-    cout << endl << "Complete! Generated: " + Utils::formatCommas(to_string(wordCount)) << endl;
+    chrono::system_clock::time_point now = chrono::system_clock::now();
+    chrono::duration<double> delta = now - beginTime;
+    cout << endl << "Complete! Generated: " + Utils::formatCommas(totalWordCount) + " in " + Utils::formatTime(delta.count()) << endl;
 }
 
 //Empty
@@ -207,7 +215,15 @@ void Generator::append(){
 void Generator::addLine(string line){
     bool flushed = fb->addLine(line);
     if (flushed){
-        cout << line << endl;
+        chrono::system_clock::time_point now = chrono::system_clock::now();
+        chrono::duration<double> delta = now - lastFlush;
+        float wps = wordCount / delta.count();
+
+        cout << "Speed (words-per-second): " + Utils::formatCommas((int)wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
+        
+        wordCount = 0;
+        lastFlush = now;
     }
     wordCount++;
+    totalWordCount++;
 }
