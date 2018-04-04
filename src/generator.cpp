@@ -199,8 +199,29 @@ void Generator::combine(const string& currentWord){
 }
 
 //Leet substitution
-void Generator::leet(){
+vector<string> Generator::leet(const string& word){
+    vector<string> leets;
+    
+    string lastWord = word;
+    int optLeetsLen = options->optLeets.size();
+    for (int i = 0; i < optLeetsLen; i++){
+        Leet* leet = options->optLeets.at(i);
+        int fromLen = leet->from.size();
+        int toLen = leet->to.size();
+        for (int j = 0; j < fromLen; j++){
+            string from = leet->from.at(j);
+            for (int k = 0; k < toLen; k++){
+                string to = leet->to.at(k);
+                string newWord = Utils::replaceAll(lastWord, from, to);
+                if (newWord != lastWord){
+                    leets.push_back(newWord);
+                }
+                lastWord = newWord;
+            }
+        }
+    }
 
+    return leets;
 }
 
 //Prepend/Append sequences
@@ -249,7 +270,9 @@ void Generator::addSequences(const string& word){
     }
 }
 
-void Generator::addLine(string line){
+
+
+void Generator::addLine(const string& line){
     bool flushed = fb->addLine(line);
     if (flushed){
         chrono::system_clock::time_point now = chrono::system_clock::now();

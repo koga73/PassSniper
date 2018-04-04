@@ -1,6 +1,11 @@
 #ifndef ___OPTIONS___
 #define ___OPTIONS___
 
+#include <string>
+#include <vector>
+
+#include "leet.h"
+
 using namespace std;
 
 class Options {
@@ -43,7 +48,9 @@ class Options {
 		string optPrepend = DEFAULT_OPT_PREPEND;
 		bool optUseAppend = DEFAULT_OPT_USE_APPEND;
 		string optAppend = DEFAULT_OPT_APPEND;
-
+		vector<Leet*> optLeets;
+		
+		Options(vector<Leet*> optLeets);
 		void demoOrganization();
 
 		friend ostream& operator<<(ostream& os, const Options* obj);

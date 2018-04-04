@@ -1,6 +1,7 @@
 #include <iostream>
 #include <conio.h>
 
+#include "leet.h"
 #include "options.h"
 #include "filebuffer.h"
 #include "generator.h"
@@ -86,7 +87,8 @@ int main(int argc, char **argv){
 }
 
 Options* getOptions(){
-    Options* options = new Options();
+    //TODO: Make Leet::parse() take in file parameter
+    Options* options = new Options(Leet::parse());
 
     //Target
     bool isDemo;

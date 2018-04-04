@@ -16,6 +16,7 @@ class Utils {
 		static bool isNumeric(const string& s);
 		static string formatCommas(int val);
 		static string formatTime(double seconds);
+		static string replaceAll(const string& s, const string& from, const string& to);
 };
 
 #endif

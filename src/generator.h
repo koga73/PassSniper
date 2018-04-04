@@ -35,9 +35,10 @@ class Generator {
 		void cases();
 		void combine();
 		void combine(const string& currentWord);
-		void leet();
+		void variations(const string& word);
+		vector<string> leet(const string& word);
 		void addSequences(const string& word);
-		void addLine(string line);
+		void addLine(const string& line);
 };
 
 #endif

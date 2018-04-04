@@ -76,3 +76,15 @@ string Utils::formatTime(double seconds){
     }
     return to_string(hours) + ":" + to_string(minutes) + ":" + sseconds;
 }
+
+string Utils::replaceAll(const string& s, const string& from, const string& to){
+    string replaced = s;
+    if(!from.empty()){
+        size_t start_pos = 0;
+        while((start_pos = replaced.find(from, start_pos)) != string::npos) {
+            replaced.replace(start_pos, from.length(), to);
+            start_pos += to.length();
+        }
+    }
+    return replaced;
+}

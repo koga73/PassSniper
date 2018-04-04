@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "options.h"
 
@@ -20,6 +22,10 @@ const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1";
 const bool Options::DEFAULT_OPT_USE_APPEND = true;
 const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1,123";
 
+Options::Options(vector<Leet*> optLeets){
+	this->optLeets = optLeets;
+}
+
 void Options::demoOrganization(){
 	dataIsIndividual = false;
 	dataIsOrganization = true;
@@ -30,29 +36,28 @@ void Options::demoOrganization(){
 }
 
 ostream& operator<<(ostream& os, const Options* obj){
-	os <<
 	//Data
-	"dataIsIndividual: " << obj->dataIsIndividual << endl <<
-	"dataIsOrganization: " << obj->dataIsOrganization << endl <<
-	"dataNames: " << obj->dataNames << endl <<
-	"dataKeywords: " << obj->dataKeywords << endl <<
-	"dataDates: " << obj->dataDates << endl <<
-	"dataNumbers: " << obj->dataNumbers << endl <<
+	os << "dataIsIndividual: " << obj->dataIsIndividual << endl;
+	os << "dataIsOrganization: " << obj->dataIsOrganization << endl;
+	os << "dataNames: " << obj->dataNames << endl;
+	os << "dataKeywords: " << obj->dataKeywords << endl;
+	os << "dataDates: " << obj->dataDates << endl;
+	os << "dataNumbers: " << obj->dataNumbers << endl;
 
 	//Keyspace
-	"ksMin: " << obj->ksMin << endl <<
-	"ksMax: " << obj->ksMax << endl <<
-	"ksUseLower: " << obj->ksUseLower << endl <<
-	"ksUseUpper: " << obj->ksUseUpper << endl <<
-	"ksUseNum: " << obj->ksUseNum << endl <<
+	os << "ksMin: " << obj->ksMin << endl;
+	os << "ksMax: " << obj->ksMax << endl;
+	os << "ksUseLower: " << obj->ksUseLower << endl;
+	os << "ksUseUpper: " << obj->ksUseUpper << endl;
+	os << "ksUseNum: " << obj->ksUseNum << endl;
 	
 	//Options
-	"optMaxCombinedNums: " << obj->optMaxCombinedNums << endl <<
-	"optLeet: " << obj->optLeet << endl <<
-	"optUsePrepend: " << obj->optUsePrepend << endl <<
-	"optPrepend: " << obj->optPrepend << endl <<
-	"optUseAppend: " << obj->optUseAppend << endl <<
-	"optAppend: " << obj->optAppend << endl;
+	os << "optMaxCombinedNums: " << obj->optMaxCombinedNums << endl;
+	os << "optLeet: " << obj->optLeet << endl;
+	os << "optUsePrepend: " << obj->optUsePrepend << endl;
+	os << "optPrepend: " << obj->optPrepend << endl;
+	os << "optUseAppend: " << obj->optUseAppend << endl;
+	os << "optAppend: " << obj->optAppend << endl;
 
 	return os;
 }
