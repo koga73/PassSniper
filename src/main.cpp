@@ -184,7 +184,7 @@ Options* getOptions(){
     if (options->ksUseNum){
         options->optMaxCombinedNums = getNum(Options::DEFAULT_OPT_MAX_COMBINED_NUMS, "Option - Maximum Combined Numbers (Example (4) = 'password12' = 'password1234')");
     }
-    options->optLeet = getBool(Options::DEFAULT_OPT_LEET, "Option - Leet Substitution (Example 'e' > '3')");
+    options->optUseLeet = getBool(Options::DEFAULT_OPT_LEET, "Option - Leet Substitution (Example 'e' > '3')");
     options->optUsePrepend = getBool(Options::DEFAULT_OPT_USE_PREPEND, "Option - Prepend sequences (Example 'password' = '123password')");
     if (options->optUsePrepend){
         options->optPrepend = getString(Options::DEFAULT_OPT_PREPEND, "Option - Prepend Sequences (Comma Separated)");

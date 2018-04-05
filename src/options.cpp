@@ -53,7 +53,7 @@ ostream& operator<<(ostream& os, const Options* obj){
 	
 	//Options
 	os << "optMaxCombinedNums: " << obj->optMaxCombinedNums << endl;
-	os << "optLeet: " << obj->optLeet << endl;
+	os << "optUseLeet: " << obj->optUseLeet << endl;
 	os << "optUsePrepend: " << obj->optUsePrepend << endl;
 	os << "optPrepend: " << obj->optPrepend << endl;
 	os << "optUseAppend: " << obj->optUseAppend << endl;

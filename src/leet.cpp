@@ -9,6 +9,18 @@ using namespace std;
 
 //TODO: Move to embeded resource / external file
 const string Leet::CONFIG = 
+	/*"#PassSniper leet substitution config" "\n"
+	"#" "\n"
+	"#Format: {CSV_SEARCH_CHARS}[SPACE]{CSV_REPLACE_SEQ}" "\n"
+	"#Example: 'e,E 3' will replace 'e' and 'E' with '3'" "\n"
+	"#" "\n"
+	"#Order matters! Most common replacements should be at the top" "\n"
+	"#Example input: 'moneys' will generate the following output:" "\n"
+	"# mon3ys" "\n"
+	"# m0n3ys" "\n"
+	"# m0n3y5" "\n"
+	"# m0n3y$" "\n"
+	"#" "\n"*/
     "e,E 3" "\n"
     "o,O 0" "\n"
     "i,I 1" "\n"

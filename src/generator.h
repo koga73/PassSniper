@@ -26,6 +26,7 @@ class Generator {
 		Options*& options;
 		FileBuffer*& fb;
 		vector<string> words;
+		int ksMinOffset = 0;
 		int totalWordCount = 0;
 		int wordCount = 0;
 		chrono::system_clock::time_point beginTime;
@@ -35,9 +36,10 @@ class Generator {
 		void cases();
 		void combine();
 		void combine(const string& currentWord);
-		void variations(const string& word);
+		vector<string> variations(const string& word);
 		vector<string> leet(const string& word);
-		void addSequences(const string& word);
+		vector<string> prepend(const string& word);
+		vector<string> append(const string& word);
 		void addLine(const string& line);
 };
 

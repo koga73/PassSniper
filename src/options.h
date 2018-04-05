@@ -43,7 +43,7 @@ class Options {
 		
 		//Options
 		int optMaxCombinedNums = DEFAULT_OPT_MAX_COMBINED_NUMS;
-		bool optLeet = DEFAULT_OPT_LEET;
+		bool optUseLeet = DEFAULT_OPT_LEET;
 		bool optUsePrepend = DEFAULT_OPT_USE_PREPEND;
 		string optPrepend = DEFAULT_OPT_PREPEND;
 		bool optUseAppend = DEFAULT_OPT_USE_APPEND;
