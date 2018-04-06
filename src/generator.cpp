@@ -238,6 +238,12 @@ vector<string> Generator::variations(const string& word){
             Utils::concat(variations, appends);
         }
     }
+
+    variationsLen = variations.size();
+    for (i = 0; i < variationsLen; i++){
+        vector<string> reduced = reduceDuplicates(variations.at(i));
+        Utils::concat(variations, reduced);
+    }
     
     return variations;
 }
@@ -298,6 +304,26 @@ vector<string> Generator::append(const string& word){
     }
 
     return sequences;
+}
+
+vector<string> Generator::reduceDuplicates(const string& word){
+    vector<string> reduced;
+
+    string newWord = word;
+    int newWordLen = newWord.length();
+    for (int i = 1; i < newWordLen; i++){
+        if (newWordLen - 1 < options->ksMin){
+            break;
+        }
+        if (newWord[i - 1] == newWord[i]){
+            newWord = newWord.substr(0, i) + word.substr(i + 1, newWordLen - i - 1);
+            reduced.push_back(newWord);
+            i--;
+            newWordLen--;
+        }
+    }
+
+    return reduced;
 }
 
 void Generator::addLine(const string& line){

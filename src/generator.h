@@ -40,6 +40,7 @@ class Generator {
 		vector<string> leet(const string& word);
 		vector<string> prepend(const string& word);
 		vector<string> append(const string& word);
+		vector<string> reduceDuplicates(const string& word);
 		void addLine(const string& line);
 };
 
