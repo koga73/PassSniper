@@ -67,22 +67,40 @@ int main(int argc, char **argv){
     arguments args = getArguments(argc, argv);
 
     int exitCode = 0;
-    switch (args.mode){
-        default:
-        case MODE_HELP:
-            cout << "  -o <output>: File to output wordlist" << endl;
-            cout << "  -l <leetConfig>: File containing leet config" << endl;
-            cout << "  -gl <leetConfig>: Generate leet config file" << endl;
-            break;
-        case MODE_RUN:
-            args.outputFile = getString(args.outputFile, "Output File");
-            exitCode = run(args.outputFile, args.leetConfig);
-            break;
-        case MODE_CONFIG:
-            exitCode = generateLeet(args.leetConfig);
-            break;
+    string errorMsg;
+    try {
+        switch (args.mode){
+            default:
+            case MODE_HELP:
+                cout << "  -o <output>: File to output wordlist" << endl;
+                cout << "  -l <leetConfig>: File containing leet config" << endl;
+                cout << "  -gl <leetConfig>: Generate leet config file" << endl;
+                break;
+            case MODE_RUN:
+                args.outputFile = getString(args.outputFile, "Output File");
+                exitCode = run(args.outputFile, args.leetConfig);
+                break;
+            case MODE_CONFIG: 
+                args.leetConfig = getString(args.leetConfig, "Leet File");
+                exitCode = generateLeet(args.leetConfig);
+                break;
+        }
+    } catch (ios::failure &ex){
+        errorMsg = ex.what();
+    } catch (const char* ex){
+        errorMsg = string(ex);
+    } catch (string ex){
+        errorMsg = ex;
+    } catch (...){
+        errorMsg = "An error occured.";
     }
-
+    if (errorMsg.length()){
+        cout << errorMsg << " Exiting." << endl;
+        if (!exitCode){
+            exitCode = 1;
+        }
+    }
+    
     cout << endl;
     system("PAUSE");
     return exitCode;
@@ -143,41 +161,33 @@ bool run(const string outputFile, const string leetConfig){
     Options* options;
     Generator* gen;
 
-    string errorMsg;
-    try {
-        //Test file access
-        if (!fb->test()){
-            throw "Could not open output file.";
-        }
+    //Test file access
+    if (!fb->test()){
+        throw "Could not open output file.";
+    }
 
-        //Get user options
-        options = getOptions();
-        //DEBUG
-        cout << endl << options << endl;
-        
-        //Generate
-        gen = new Generator(options, fb);
-        gen->generate();
-    } catch (ios::failure &ex){
-        errorMsg = ex.what();
-    } catch (const char* ex){
-        errorMsg = string(ex);
-    } catch (string ex){
-        errorMsg = ex;
-    } catch (...){
-        errorMsg = "An error occured.";
-    }
-    if (errorMsg.length()){
-        cout << errorMsg << " Exiting." << endl;
-        cout << endl;
-        system("PAUSE");
-        return 1;
-    }
+    //Get user options
+    options = getOptions();
+    //DEBUG
+    cout << endl << options << endl;
+
+    //Generate
+    gen = new Generator(options, fb);
+    gen->generate();
+
     return 0;
 }
 
 bool generateLeet(const string leetConfig){
-    cout << "generateLeet" << endl;
+    ofstream ofs;
+    ofs.exceptions(ios::failbit | ios::badbit);
+    ofs.open(leetConfig, ios::out | ios::trunc); //Open file for output and append to eof
+    if (ofs && ofs.is_open()){
+        ofs << Leet::CONFIG;
+    } else {
+        throw "There was an error opening the output file.";
+        return 1;
+    }
     return 0;
 }
 

@@ -11,6 +11,8 @@ using namespace std;
 class Leet {
 	public:
 		static const string CONFIG;
+		
+		static const regex REGEX_COMMENT;
 		static const regex REGEX_WHITESPACE;
 
 		vector<string> from;

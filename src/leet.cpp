@@ -9,18 +9,18 @@ using namespace std;
 
 //TODO: Move to embeded resource / external file
 const string Leet::CONFIG = 
-	/*"#PassSniper leet substitution config" "\n"
-	"#" "\n"
+	"#PassSniper leet substitution config" "\n"
+	"# " "\n"
 	"#Format: {CSV_SEARCH_CHARS}[SPACE]{CSV_REPLACE_SEQ}" "\n"
 	"#Example: 'e,E 3' will replace 'e' and 'E' with '3'" "\n"
-	"#" "\n"
+	"# " "\n"
 	"#Order matters! Most common replacements should be at the top" "\n"
 	"#Example input: 'moneys' will generate the following output:" "\n"
 	"# mon3ys" "\n"
 	"# m0n3ys" "\n"
 	"# m0n3y5" "\n"
 	"# m0n3y$" "\n"
-	"#" "\n"*/
+	"# " "\n"
     "e,E 3" "\n"
     "o,O 0" "\n"
     "i,I 1" "\n"
@@ -34,6 +34,7 @@ const string Leet::CONFIG =
     "b,B 8" "\n"
     "c ("
 ;
+const regex Leet::REGEX_COMMENT = regex("#.+?\n");
 const regex Leet::REGEX_WHITESPACE = regex("\\s+");
 
 Leet::Leet(vector<string> from, vector<string> to){
@@ -47,7 +48,8 @@ vector<Leet*> Leet::parse(){
 vector<Leet*> Leet::parse(const string& config){
 	vector<Leet*> leets;
 
-	vector<string> groups = Utils::split(config, REGEX_WHITESPACE);
+	string configData = regex_replace(config, REGEX_COMMENT, "");
+	vector<string> groups = Utils::split(configData, REGEX_WHITESPACE);
 	int groupsLen = groups.size();
 	if (groupsLen % 2){
 		throw "Invalid Leet Config.";
