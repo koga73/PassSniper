@@ -24,7 +24,10 @@ int main(int argc, char **argv){
     cout << "Generating targeted wordlists for pentesting" << endl;
     cout << endl;
     cout << "PassSniper v1.0.0 - AJ Savino" << endl;
-    cout << "CLI Usage: passsniper [outputfile]" << endl;
+    cout << "CLI Usage: passsniper [Options]" << endl;
+    cout << "  -o <output>: File to output wordlist" << endl;
+    cout << "  -l <leetConfig>: File containing leet config" << endl;
+    cout << "  -gl <leetConfig>: Generate leet config file" << endl;
     cout << endl;
     cout << endl;
 
@@ -41,8 +44,25 @@ int main(int argc, char **argv){
 
     //Get output file
     string outputFile = "./output.txt";
+    string leetConfig = "./leet.config";
     if (argc == 2){
         outputFile = argv[1];
+    } else if (argc > 2){
+        for (int i = 0; i < argc; i++){
+            string arg = argv[i];
+            if (arg == "-gl"){
+                if (i + 1 < argc){
+                    leetConfig = argv[i + 1];
+                }
+                break;
+            }
+            if (arg == "-l" && i + 1 < argc){
+                leetConfig = argv[i + 1];
+            }
+            if (arg == "-o" && i + 1 < argc){
+                outputFile = argv[i + 1];
+            }
+        }
     }
     outputFile = getString(outputFile, "Output File");
 
