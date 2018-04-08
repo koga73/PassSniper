@@ -8,7 +8,43 @@
 
 using namespace std;
 
+const string DEFAULT_OUTPUT = "./output.txt";
+const string DEFAULT_LEET_CONFIG = "./leet.config";
+
+enum MODE {
+    MODE_HELP,
+    MODE_RUN,
+    MODE_CONFIG
+};
+enum ARGUMENT_INDEX {
+    ARGUMENT_INDEX_HELP1 = 0,
+    ARGUMENT_INDEX_HELP2 = 1,
+    ARGUMENT_INDEX_HELP3 = 2,
+    ARGUMENT_INDEX_HELP4 = 3,
+    ARGUMENT_INDEX_OUTPUT = 4,
+    ARGUMENT_INDEX_GENERATE_LEET = 5,
+    ARGUMENT_INDEX_USE_LEET = 6
+};
+const char* ARGUMENT_FLAGS[] = {
+    "help",
+    "-help",
+    "?",
+    "-?",
+    "-o",
+    "-gl",
+    "-l"
+};
+
+struct arguments {
+    MODE mode = MODE_RUN;
+    string outputFile = DEFAULT_OUTPUT;
+    string leetConfig = DEFAULT_LEET_CONFIG;
+};
+
 Options* getOptions();
+arguments getArguments(int argc, char **argv);
+bool run(const string outputFile, const string leetConfig);
+bool generateLeet(const string leetConfig);
 int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
 string getString(string defaultVal, string message);
@@ -21,17 +57,78 @@ int main(int argc, char **argv){
     cout << " / ____/ /_/ (__  |__  )___/ / / / / / /_/ /  __/ /    " << endl;
     cout << "/_/    \\__,_/____/____//____/_/ /_/_/ .___/\\___/_/     " << endl;
     cout << "                                   /_/                 " << endl;
-    cout << "Generating targeted wordlists for pentesting" << endl;
     cout << endl;
     cout << "PassSniper v1.0.0 - AJ Savino" << endl;
+    cout << "Generating targeted wordlists for pentesting" << endl;
+    cout << endl;
     cout << "CLI Usage: passsniper [Options]" << endl;
-    cout << "  -o <output>: File to output wordlist" << endl;
-    cout << "  -l <leetConfig>: File containing leet config" << endl;
-    cout << "  -gl <leetConfig>: Generate leet config file" << endl;
-    cout << endl;
-    cout << endl;
+    cout << "  -help: Show commands" << endl;
 
+    arguments args = getArguments(argc, argv);
+
+    int exitCode = 0;
+    switch (args.mode){
+        default:
+        case MODE_HELP:
+            cout << "  -o <output>: File to output wordlist" << endl;
+            cout << "  -l <leetConfig>: File containing leet config" << endl;
+            cout << "  -gl <leetConfig>: Generate leet config file" << endl;
+            break;
+        case MODE_RUN:
+            args.outputFile = getString(args.outputFile, "Output File");
+            exitCode = run(args.outputFile, args.leetConfig);
+            break;
+        case MODE_CONFIG:
+            exitCode = generateLeet(args.leetConfig);
+            break;
+    }
+
+    cout << endl;
+    system("PAUSE");
+    return exitCode;
+}
+
+arguments getArguments(int argc, char **argv){
+    arguments args;
+    if (argc >= 2){
+        bool foundFlag = false;
+        for (int i = 0; i < argc; i++){
+            string arg = argv[i];
+            if (arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_HELP1] || 
+                arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_HELP2] ||
+                arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_HELP3] ||
+                arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_HELP4]){
+                foundFlag = true;
+                args.mode = MODE_HELP;
+                break;
+            }
+            if (arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_GENERATE_LEET]){
+                foundFlag = true;
+                args.mode = MODE_CONFIG;
+                if (i + 1 < argc){
+                    args.leetConfig = argv[i + 1];
+                }
+                break;
+            }
+            if (arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_USE_LEET] && i + 1 < argc){
+                foundFlag = true;
+                args.leetConfig = argv[i + 1];
+            }
+            if (arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_OUTPUT] && i + 1 < argc){
+                foundFlag = true;
+                args.outputFile = argv[i + 1];
+            }
+        }
+        if (!foundFlag && argc == 2){
+            args.outputFile = argv[1];
+        }
+    }
+    return args;
+}
+
+bool run(const string outputFile, const string leetConfig){
     //Warning
+    cout << endl;
     cout << "Think before using... don't be a dick." << endl;
     char key;
     do {
@@ -41,30 +138,6 @@ int main(int argc, char **argv){
             exit(0);
         }
     } while (key != 13);
-
-    //Get output file
-    string outputFile = "./output.txt";
-    string leetConfig = "./leet.config";
-    if (argc == 2){
-        outputFile = argv[1];
-    } else if (argc > 2){
-        for (int i = 0; i < argc; i++){
-            string arg = argv[i];
-            if (arg == "-gl"){
-                if (i + 1 < argc){
-                    leetConfig = argv[i + 1];
-                }
-                break;
-            }
-            if (arg == "-l" && i + 1 < argc){
-                leetConfig = argv[i + 1];
-            }
-            if (arg == "-o" && i + 1 < argc){
-                outputFile = argv[i + 1];
-            }
-        }
-    }
-    outputFile = getString(outputFile, "Output File");
 
     FileBuffer* fb = new FileBuffer(outputFile);
     Options* options;
@@ -100,9 +173,11 @@ int main(int argc, char **argv){
         system("PAUSE");
         return 1;
     }
-    
-    cout << endl;
-    system("PAUSE");
+    return 0;
+}
+
+bool generateLeet(const string leetConfig){
+    cout << "generateLeet" << endl;
     return 0;
 }
 
