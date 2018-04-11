@@ -42,6 +42,7 @@ struct arguments {
 };
 
 Options* getOptions();
+Options* getOptions(const string leetConfigData);
 arguments getArguments(int argc, char **argv);
 bool run(const string outputFile, const string leetConfig);
 bool generateLeet(const string leetConfig);
@@ -61,8 +62,9 @@ int main(int argc, char **argv){
     cout << "PassSniper v1.0.0 - AJ Savino" << endl;
     cout << "Generating targeted wordlists for pentesting" << endl;
     cout << endl;
-    cout << "CLI Usage: passsniper [Options]" << endl;
-    cout << "  -help: Show commands" << endl;
+    cout << "CLI Usage:" << endl;
+    cout << "  passsniper <output>" << endl;
+    cout << "    -?  Show commands" << endl;
 
     arguments args = getArguments(argc, argv);
 
@@ -72,9 +74,10 @@ int main(int argc, char **argv){
         switch (args.mode){
             default:
             case MODE_HELP:
-                cout << "  -o <output>: File to output wordlist" << endl;
-                cout << "  -l <leetConfig>: File containing leet config" << endl;
-                cout << "  -gl <leetConfig>: Generate leet config file" << endl;
+                cout << "  passsniper [Options]" << endl;
+                cout << "    -o  <output>: File to output wordlist" << endl;
+                cout << "    -l  <leetConfig>: File containing leet config" << endl;
+                cout << "    -gl <leetConfig>: Generate leet config file" << endl;
                 break;
             case MODE_RUN:
                 args.outputFile = getString(args.outputFile, "Output File");
@@ -166,8 +169,21 @@ bool run(const string outputFile, const string leetConfig){
         throw "Could not open output file.";
     }
 
+    string leetConfigData = "";
+    ifstream ifs;
+    ifs.exceptions(ios::failbit | ios::badbit);
+    ifs.open(leetConfig, ios::in); //Open file for input
+    if (ifs && ifs.is_open()){
+        string line;
+        while (getline(ifs, line)){
+            leetConfigData += line + '\n';
+        }
+        ifs.close();
+        cout << endl << "Loaded leet config." << endl;
+    }
+
     //Get user options
-    options = getOptions();
+    options = getOptions(leetConfigData);
     //DEBUG
     cout << endl << options << endl;
 
@@ -184,6 +200,7 @@ bool generateLeet(const string leetConfig){
     ofs.open(leetConfig, ios::out | ios::trunc); //Open file for output and append to eof
     if (ofs && ofs.is_open()){
         ofs << Leet::CONFIG;
+        ofs.close();
     } else {
         throw "There was an error opening the output file.";
         return 1;
@@ -192,9 +209,11 @@ bool generateLeet(const string leetConfig){
 }
 
 Options* getOptions(){
-    //TODO: Make Leet::parse() take in file parameter
-    Options* options = new Options(Leet::parse());
-
+    return getOptions("");
+}
+Options* getOptions(const string leetConfigData){
+    Options* options = new Options(Leet::parse(leetConfigData));
+    
     //Target
     bool isDemo;
     bool isIndividual;

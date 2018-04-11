@@ -12,7 +12,7 @@ class Leet {
 	public:
 		static const string CONFIG;
 		
-		static const regex REGEX_COMMENT;
+		static const regex REGEX_NEWLINE;
 		static const regex REGEX_WHITESPACE;
 
 		vector<string> from;
@@ -21,7 +21,7 @@ class Leet {
 		Leet(vector<string> from, vector<string> to);
 
 		static vector<Leet*> parse();
-		static vector<Leet*> parse(const string& config);
+		static vector<Leet*> parse(const string& configData);
 
 		friend ostream& operator<<(ostream& os, const Leet* obj);
 };
