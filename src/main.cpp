@@ -172,15 +172,17 @@ bool run(const string outputFile, const string leetConfig){
     string leetConfigData = "";
     ifstream ifs;
     ifs.exceptions(ios::failbit | ios::badbit);
-    ifs.open(leetConfig, ios::in); //Open file for input
-    if (ifs && ifs.is_open()){
-        string line;
-        while (getline(ifs, line)){
-            leetConfigData += line + '\n';
+    try {
+        ifs.open(leetConfig, ios::in); //Open file for input
+        if (ifs && ifs.is_open()){
+            string line;
+            while (getline(ifs, line)){
+                leetConfigData += line + '\n';
+            }
+            ifs.close();
+            cout << endl << "Loaded leet config." << endl;
         }
-        ifs.close();
-        cout << endl << "Loaded leet config." << endl;
-    }
+    } catch (...){}
 
     //Get user options
     options = getOptions(leetConfigData);
