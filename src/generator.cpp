@@ -23,9 +23,11 @@ void Generator::generate(){
     ksMinOffset = 0;
     if (options->optUsePrepend){
         ksMinOffset++;
+        prependSequencesLen = options->getPrependSequences(true).size(); //Build cache
     }
     if (options->optUseAppend){
         ksMinOffset++;
+        appendSequencesLen = options->getAppendSequences(true).size(); //Build cache
     }
     totalWordCount = 0;
     wordCount = 0;
@@ -184,26 +186,30 @@ void Generator::combine(){
     combine("");
 }
 void Generator::combine(const string& currentWord){
+    int currentWordLen = currentWord.length();
     int wordsLen = words.size();
     for (int i = 0; i < wordsLen; i++){
-        string newWord = currentWord + words.at(i);
+        string& nextWord = words.at(i);
+
+        string newWord = currentWord + nextWord;
         int newWordLen = newWord.length();
 
+        //Enforce max combined nums
         string lastBit = newWord.substr(max(newWordLen - options->optMaxCombinedNums - 1, 0));
         if (lastBit.length() == options->optMaxCombinedNums + 1 && Utils::isNumeric(lastBit)){ //isNumeric
             continue;
         }
+
         if (newWordLen <= options->ksMax){
             if (newWordLen >= options->ksMin - ksMinOffset){ //minOffset because variant prepend/append will add length
-                vector<string> variants = variations(newWord);
+                vector<string> variants = variations(newWord, currentWordLen);
                 int variantsLen = variants.size();
                 for (int j = 0; j < variantsLen; j++){
-                    string variant = variants.at(j);
-                    if (variant.length() >= options->ksMin){
-                        addLine(variant);
-                    }
+                    addLine(variants.at(j));
                 }
             }
+
+            //Recurse!
             if (newWordLen < options->ksMax){
                 combine(newWord);
             }
@@ -211,12 +217,13 @@ void Generator::combine(const string& currentWord){
     }
 }
 
-vector<string> Generator::variations(const string& word){
+vector<string> Generator::variations(const string& word, const int splitIndex){
     vector<string> variations;
     variations.push_back(word);
     
     int i;
     int variationsLen;
+    //Leet
     if (options->optUseLeet){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
@@ -224,6 +231,16 @@ vector<string> Generator::variations(const string& word){
             Utils::concat(variations, leets);
         }
     }
+    //Reduce Duplicate
+    variationsLen = variations.size();
+    for (i = 0; i < variationsLen; i++){
+        string reduced = reduceDuplicate(variations.at(i), splitIndex);
+        int reducedLen = reduced.length();
+        if (reducedLen && reducedLen >= options->ksMin){
+            variations.push_back(reduced);
+        }
+    }
+    //Prepend
     if (options->optUsePrepend){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
@@ -231,6 +248,7 @@ vector<string> Generator::variations(const string& word){
             Utils::concat(variations, prepends);
         }
     }
+    //Append
     if (options->optUseAppend){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
@@ -239,12 +257,6 @@ vector<string> Generator::variations(const string& word){
         }
     }
 
-    variationsLen = variations.size();
-    for (i = 0; i < variationsLen; i++){
-        vector<string> reduced = reduceDuplicates(variations.at(i));
-        Utils::concat(variations, reduced);
-    }
-    
     return variations;
 }
 
@@ -259,14 +271,17 @@ vector<string> Generator::leet(const string& word){
         int fromLen = leet->from.size();
         int toLen = leet->to.size();
         for (int j = 0; j < fromLen; j++){
-            string from = leet->from.at(j);
+            string& from = leet->from.at(j);
             for (int k = 0; k < toLen; k++){
-                string to = leet->to.at(k);
+                string& to = leet->to.at(k);
                 string newWord = Utils::replaceAll(lastWord, from, to);
                 if (newWord != lastWord){
-                    leets.push_back(newWord);
+                    int newWordLen = newWord.length();
+                    if (newWordLen >= options->ksMin && newWordLen <= options->ksMax){
+                        leets.push_back(newWord);
+                    }
+                    lastWord = newWord;
                 }
-                lastWord = newWord;
             }
         }
     }
@@ -274,12 +289,20 @@ vector<string> Generator::leet(const string& word){
     return leets;
 }
 
+//Reduce duplicates - "1337" + "70" = "133770" | "133770", 4 = "13370"
+string Generator::reduceDuplicate(const string& word, const int splitIndex){
+    int wordLen = word.length();
+    if (wordLen - 1 >= options->ksMin && word[splitIndex - 1] == word[splitIndex]){
+        return word.substr(0, splitIndex - 1) + word.substr(splitIndex, wordLen - splitIndex);
+    }
+    return "";
+}
+
 //Prepend sequences
 vector<string> Generator::prepend(const string& word){
     vector<string> sequences;
 
-    vector<string> prependSequences = Utils::split(options->optPrepend);
-    int prependSequencesLen = prependSequences.size();
+    vector<string> prependSequences = options->getPrependSequences();
     for (int i = 0; i < prependSequencesLen; i++){
         string newWord = prependSequences.at(i) + word;
         if (newWord.length() <= options->ksMax){
@@ -294,8 +317,7 @@ vector<string> Generator::prepend(const string& word){
 vector<string> Generator::append(const string& word){
     vector<string> sequences;
 
-    vector<string> appendSequences = Utils::split(options->optAppend);
-    int appendSequencesLen = appendSequences.size();
+    vector<string> appendSequences = options->getAppendSequences();
     for (int i = 0; i < appendSequencesLen; i++){
         string newWord = word + appendSequences.at(i);
         if (newWord.length() <= options->ksMax){
@@ -304,26 +326,6 @@ vector<string> Generator::append(const string& word){
     }
 
     return sequences;
-}
-
-vector<string> Generator::reduceDuplicates(const string& word){
-    vector<string> reduced;
-
-    string newWord = word;
-    int newWordLen = newWord.length();
-    for (int i = 1; i < newWordLen; i++){
-        if (newWordLen - 1 < options->ksMin){
-            break;
-        }
-        if (newWord[i - 1] == newWord[i]){
-            newWord = newWord.substr(0, i) + word.substr(i + 1, newWordLen - i - 1);
-            reduced.push_back(newWord);
-            i--;
-            newWordLen--;
-        }
-    }
-
-    return reduced;
 }
 
 void Generator::addLine(const string& line){

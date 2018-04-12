@@ -27,8 +27,8 @@ class Options {
 		static const string DEFAULT_OPT_APPEND;
 
 		//Data
-		bool dataIsIndividual = false;
 		bool dataIsOrganization = false;
+		bool dataIsIndividual = false;
 		string dataNames = "";
 		string dataKeywords = "";
 		string dataDates = "";
@@ -52,8 +52,16 @@ class Options {
 		
 		Options(vector<Leet*> optLeets);
 		void demoOrganization();
+		vector<string> getPrependSequences();
+		vector<string> getPrependSequences(bool clearCache);
+		vector<string> getAppendSequences();
+		vector<string> getAppendSequences(bool clearCache);
 
 		friend ostream& operator<<(ostream& os, const Options* obj);
+
+	private:
+		vector<string> prependSequences;
+		vector<string> appendSequences;
 };
 
 #endif

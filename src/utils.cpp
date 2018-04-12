@@ -31,11 +31,10 @@ vector<string> Utils::split(const string& s, const char& delim){
 	return ret;
 }
 vector<string> Utils::split(const string& s, const regex& re){
-    vector<string> container = {
+    return {
         sregex_token_iterator(s.begin(), s.end(), re, -1),
         sregex_token_iterator()
     };
-    return container;
 }
 
 void Utils::concat(vector<string>& vecA, vector<string>& vecB){

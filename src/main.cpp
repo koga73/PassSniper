@@ -218,24 +218,24 @@ Options* getOptions(const string leetConfigData){
     
     //Target
     bool isDemo;
-    bool isIndividual;
     bool isOrganization;
+    bool isIndividual;
     do {
         string target;
         cout << endl;
         cout << "Select wordlist generation target:" << endl;
         cout << "  [0] Demo - Organization" << endl;
-        cout << "  [1] Invididual" << endl;
-        cout << "  [2] Organization" << endl;
+        cout << "  [1] Organization" << endl;
+        cout << "  [2] Invididual" << endl;
         cout << ":";
         cin.clear();
         cin.sync();
         getline(cin, target);
 
         isDemo = target == "0";
-        isIndividual = target == "1";
-        isOrganization = target == "2";
-        if (isDemo || isIndividual || isOrganization){
+        isOrganization = target == "1";
+        isIndividual = target == "2";
+        if (isDemo || isOrganization || isIndividual){
             break;
         } else {
             cout << endl << "Please type '0', '1' or '2' and press [ENTER]" << endl;
@@ -245,52 +245,52 @@ Options* getOptions(const string leetConfigData){
         options->demoOrganization();
         return options;
     }
-    options->dataIsIndividual = isIndividual;
     options->dataIsOrganization = isOrganization;
+    options->dataIsIndividual = isIndividual;
 
     cout << endl << "LESS is MORE! Filling in everything will generate MILLIONS of combinations" << endl;
 
     //Names
     cout << endl;
     cout << "Names (Optional)(Comma Separated)" << endl;
-    if (options->dataIsIndividual){
-        cout << "      (Pets,Children,Spouse,Other)" << endl;
-    }
     if (options->dataIsOrganization){
         cout << "      (Company,Street,Other)" << endl;
+    }
+    if (options->dataIsIndividual){
+        cout << "      (Pets,Children,Spouse,Other)" << endl;
     }
     options->dataNames = getString();
 
     //Keywords
     cout << endl;
     cout << "Keywords (Optional)(Comma Separated)" << endl;
-    if (options->dataIsIndividual){
-        cout << "         (Sports,Teams,Animals,Interests,Other)" << endl;
-    }
     if (options->dataIsOrganization){
         cout << "         (Mascot,Products,Other)" << endl;
+    }
+    if (options->dataIsIndividual){
+        cout << "         (Sports,Teams,Animals,Interests,Other)" << endl;
     }
     options->dataKeywords = getString();
 
     //Dates
     cout << endl;
     cout << "Significant Dates (Optional)(Comma Separated)(mm-dd-yyyy)" << endl;
-    if (options->dataIsIndividual){
-        cout << "                  (Anniversary,Birthdays,Graduation,Other)" << endl;
-    }
     if (options->dataIsOrganization){
         cout << "                  (Founded,Other)" << endl;
+    }
+    if (options->dataIsIndividual){
+        cout << "                  (Anniversary,Birthdays,Graduation,Other)" << endl;
     }
     options->dataDates = getString();
 
     //Numbers
     cout << endl;
     cout << "Significant Numbers (Optional)(Comma Separated)(555-0157)" << endl;
-    if (options->dataIsIndividual){
-        cout << "                    (Favorite,Street,Phone,Other)" << endl;
-    }
     if (options->dataIsOrganization){
         cout << "                    (Street,Phone,ID,Other)" << endl;
+    }
+    if (options->dataIsIndividual){
+        cout << "                    (Favorite,Street,Phone,Other)" << endl;
     }
     options->dataNumbers = getString();
 

@@ -3,6 +3,7 @@
 #include <string>
 
 #include "options.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -27,18 +28,38 @@ Options::Options(vector<Leet*> optLeets){
 }
 
 void Options::demoOrganization(){
-	dataIsIndividual = false;
 	dataIsOrganization = true;
+	dataIsIndividual = false;
 	dataNames = "initech";
 	dataKeywords = "tps,swingline";
 	dataDates = "02-19-1999";
 	dataNumbers = "4120,555-0157";
 }
 
+vector<string> Options::getPrependSequences(){
+	return getPrependSequences(false);
+}
+vector<string> Options::getPrependSequences(bool clearCache){
+	if (clearCache){
+		prependSequences = Utils::split(optPrepend);
+	}
+	return prependSequences;
+}
+
+vector<string> Options::getAppendSequences(){
+	return getAppendSequences(false);
+}
+vector<string> Options::getAppendSequences(bool clearCache){
+	if (clearCache){
+		appendSequences = Utils::split(optAppend);
+	}
+	return appendSequences;
+}
+
 ostream& operator<<(ostream& os, const Options* obj){
 	//Data
-	os << "dataIsIndividual: " << obj->dataIsIndividual << endl;
 	os << "dataIsOrganization: " << obj->dataIsOrganization << endl;
+	os << "dataIsIndividual: " << obj->dataIsIndividual << endl;
 	os << "dataNames: " << obj->dataNames << endl;
 	os << "dataKeywords: " << obj->dataKeywords << endl;
 	os << "dataDates: " << obj->dataDates << endl;
