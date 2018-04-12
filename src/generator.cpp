@@ -333,9 +333,9 @@ void Generator::addLine(const string& line){
     if (flushed){
         chrono::system_clock::time_point now = chrono::system_clock::now();
         chrono::duration<double> delta = now - lastFlush;
-        float wps = wordCount / delta.count();
+        int wps = wordCount / delta.count();
 
-        cout << "Speed (words-per-second): " + Utils::formatCommas((int)wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
+        cout << "Speed (words-per-second): " + Utils::formatCommas(wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
         
         wordCount = 0;
         lastFlush = now;

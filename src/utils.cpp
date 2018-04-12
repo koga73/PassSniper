@@ -56,7 +56,7 @@ bool Utils::isNumeric(const string& s){
 string Utils::formatCommas(int val){
     string formatted = to_string(val);
     int insertPosition = formatted.length() - 3;
-    while (insertPosition > 0) {
+    while (insertPosition > 0){
         formatted.insert(insertPosition, ",");
         insertPosition -= 3;
     }
@@ -64,16 +64,18 @@ string Utils::formatCommas(int val){
 }
 
 string Utils::formatTime(double seconds){
-    int hours = seconds / 60 / 60;
-    seconds -= hours * 60 * 60;
+    int hours = seconds / 3600;
+    seconds = fmod(seconds, 3600);
     int minutes = seconds / 60;
-    int wholeSeconds = (int)seconds % 60;
-    float fractionSeconds = seconds - (int)seconds;
-    string sseconds = to_string(wholeSeconds + fractionSeconds);
-    if (to_string(wholeSeconds).length() == 1){
+    string sminutes = to_string(minutes);
+    if (sminutes.length() == 1){
+        sminutes = "0" + sminutes;
+    }
+    string sseconds = to_string(fmod(seconds, 60));
+    if (to_string((int)seconds % 60).length() == 1){
         sseconds = "0" + sseconds;
     }
-    return to_string(hours) + ":" + to_string(minutes) + ":" + sseconds;
+    return to_string(hours) + ":" + sminutes + ":" + sseconds;
 }
 
 string Utils::replaceAll(const string& s, const string& from, const string& to){
