@@ -41,8 +41,8 @@ struct arguments {
     string leetConfig = DEFAULT_LEET_CONFIG;
 };
 
-Options* getOptions();
-Options* getOptions(const string leetConfigData);
+shared_ptr<Options> getOptions();
+shared_ptr<Options> getOptions(const string leetConfigData);
 arguments getArguments(int argc, char **argv);
 bool run(const string outputFile, const string leetConfig);
 bool generateLeet(const string leetConfig);
@@ -160,11 +160,8 @@ bool run(const string outputFile, const string leetConfig){
         }
     } while (key != 13);
 
-    FileBuffer* fb = new FileBuffer(outputFile);
-    Options* options;
-    Generator* gen;
-
     //Test file access
+    shared_ptr<FileBuffer> fb (new FileBuffer(outputFile));
     if (!fb->test()){
         throw "Could not open output file.";
     }
@@ -185,12 +182,11 @@ bool run(const string outputFile, const string leetConfig){
     } catch (...){}
 
     //Get user options
-    options = getOptions(leetConfigData);
-    //DEBUG
+    shared_ptr<Options> options = getOptions(leetConfigData);
     cout << endl << options << endl;
 
     //Generate
-    gen = new Generator(options, fb);
+    unique_ptr<Generator> gen (new Generator(options, fb));
     gen->generate();
 
     return 0;
@@ -210,11 +206,11 @@ bool generateLeet(const string leetConfig){
     return 0;
 }
 
-Options* getOptions(){
+shared_ptr<Options> getOptions(){
     return getOptions("");
 }
-Options* getOptions(const string leetConfigData){
-    Options* options = new Options(Leet::parse(leetConfigData));
+shared_ptr<Options> getOptions(const string leetConfigData){
+    shared_ptr<Options> options (new Options(Leet::parse(leetConfigData)));
     
     //Target
     bool isDemo;

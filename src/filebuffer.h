@@ -13,6 +13,7 @@ class FileBuffer {
 	public:
 		FileBuffer(string fileName);
 		FileBuffer(string fileName, bool keepOpen);
+		~FileBuffer();
 		bool test();
 		bool addLine(string line);
 		void flush();

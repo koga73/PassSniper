@@ -42,11 +42,11 @@ Leet::Leet(vector<string> from, vector<string> to){
 	this->to = to;
 }
 
-vector<Leet*> Leet::parse(){
+vector<shared_ptr<Leet>> Leet::parse(){
 	return parse(CONFIG);
 }
-vector<Leet*> Leet::parse(const string& configData){
-	vector<Leet*> leets;
+vector<shared_ptr<Leet>> Leet::parse(const string& configData){
+	vector<shared_ptr<Leet>> leets;
 	string config = configData;
 	if (!config.length()){
 		config = CONFIG;
@@ -71,13 +71,14 @@ vector<Leet*> Leet::parse(const string& configData){
 	for (i = 0; i < groupsLen; i+=2){
 		vector<string> from = Utils::split(groups.at(i));
 		vector<string> to = Utils::split(groups.at(i + 1));
-		leets.push_back(new Leet(from, to));
+		shared_ptr<Leet> leet (new Leet(from, to));
+		leets.push_back(leet);
 	}
 	
 	return leets;
 }
 
-ostream& operator<<(ostream& os, const Leet* obj){
+ostream& operator<<(ostream& os, const shared_ptr<Leet> obj){
 	int i;
 
 	int fromLen = obj->from.size();

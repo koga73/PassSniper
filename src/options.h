@@ -48,16 +48,17 @@ class Options {
 		string optPrepend = DEFAULT_OPT_PREPEND;
 		bool optUseAppend = DEFAULT_OPT_USE_APPEND;
 		string optAppend = DEFAULT_OPT_APPEND;
-		vector<Leet*> optLeets;
 		
-		Options(vector<Leet*> optLeets);
+		vector<shared_ptr<Leet>> optLeets;
+		
+		Options(vector<shared_ptr<Leet>> optLeets);
 		void demoOrganization();
 		vector<string> getPrependSequences();
 		vector<string> getPrependSequences(bool clearCache);
 		vector<string> getAppendSequences();
 		vector<string> getAppendSequences(bool clearCache);
 
-		friend ostream& operator<<(ostream& os, const Options* obj);
+		friend ostream& operator<<(ostream& os, const shared_ptr<Options> obj);
 
 	private:
 		vector<string> prependSequences;

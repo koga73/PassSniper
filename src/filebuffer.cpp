@@ -14,6 +14,9 @@ FileBuffer::FileBuffer(string fileName, bool keepOpen){
 	this->fileName = fileName;
 	this->keepOpen = keepOpen;
 }
+FileBuffer::~FileBuffer(){
+	ofs.close();
+}
 
 bool FileBuffer::test(){
 	try {

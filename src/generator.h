@@ -20,12 +20,13 @@ class Generator {
 		static const regex REGEX_UPPERCASE;
 		
 	public:
-		Generator(Options*& options, FileBuffer*& fb);
+		Generator(shared_ptr<Options> options, shared_ptr<FileBuffer> fb);
+		~Generator();
 		void generate();
 		
 	private:
-		Options*& options;
-		FileBuffer*& fb;
+		shared_ptr<Options> options;
+		shared_ptr<FileBuffer> fb;
 		vector<string> words;
 		int ksMinOffset = 0;
 		int prependSequencesLen = 0;

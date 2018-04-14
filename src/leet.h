@@ -21,10 +21,10 @@ class Leet {
 
 		Leet(vector<string> from, vector<string> to);
 
-		static vector<Leet*> parse();
-		static vector<Leet*> parse(const string& configData);
+		static vector<shared_ptr<Leet>> parse();
+		static vector<shared_ptr<Leet>> parse(const string& configData);
 
-		friend ostream& operator<<(ostream& os, const Leet* obj);
+		friend ostream& operator<<(ostream& os, const shared_ptr<Leet> obj);
 };
 
 #endif

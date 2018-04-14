@@ -23,7 +23,7 @@ const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1";
 const bool Options::DEFAULT_OPT_USE_APPEND = true;
 const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1,123";
 
-Options::Options(vector<Leet*> optLeets){
+Options::Options(vector<shared_ptr<Leet>> optLeets){
 	this->optLeets = optLeets;
 }
 
@@ -56,7 +56,7 @@ vector<string> Options::getAppendSequences(bool clearCache){
 	return appendSequences;
 }
 
-ostream& operator<<(ostream& os, const Options* obj){
+ostream& operator<<(ostream& os, const shared_ptr<Options> obj){
 	//Data
 	os << "dataIsOrganization: " << obj->dataIsOrganization << endl;
 	os << "dataIsIndividual: " << obj->dataIsIndividual << endl;

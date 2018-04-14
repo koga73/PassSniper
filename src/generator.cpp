@@ -17,7 +17,14 @@ const regex Generator::REGEX_NUMERIC = regex("\\d");
 const regex Generator::REGEX_LOWERCASE = regex("[a-z]");
 const regex Generator::REGEX_UPPERCASE = regex("[A-Z]");
 
-Generator::Generator(Options*& options, FileBuffer*& fb) : options(options), fb(fb) {}
+Generator::Generator(shared_ptr<Options> options, shared_ptr<FileBuffer> fb){
+    this->options = options;
+    this->fb = fb;
+}
+Generator::~Generator(){
+    options = nullptr;
+    fb = nullptr;
+}
 
 void Generator::generate(){
     ksMinOffset = 0;
@@ -267,7 +274,7 @@ vector<string> Generator::leet(const string& word){
     string lastWord = word;
     int optLeetsLen = options->optLeets.size();
     for (int i = 0; i < optLeetsLen; i++){
-        Leet* leet = options->optLeets.at(i);
+        shared_ptr<Leet> leet = options->optLeets.at(i);
         int fromLen = leet->from.size();
         int toLen = leet->to.size();
         for (int j = 0; j < fromLen; j++){
