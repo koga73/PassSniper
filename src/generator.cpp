@@ -274,7 +274,8 @@ vector<string> Generator::leet(const string& word){
             string& from = leet->from.at(j);
             for (int k = 0; k < toLen; k++){
                 string& to = leet->to.at(k);
-                string newWord = Utils::replaceAll(lastWord, from, to);
+                string newWord = lastWord;
+                Utils::replaceAll(newWord, from, to);
                 if (newWord != lastWord){
                     int newWordLen = newWord.length();
                     if (newWordLen >= options->ksMin && newWordLen <= options->ksMax){

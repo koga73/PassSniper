@@ -7,9 +7,10 @@
 using namespace std;
 
 class FileBuffer {
-	public:
+	private:
 		static const int BUFFER_SIZE = 1024 * 512; //kb
-		
+	
+	public:
 		FileBuffer(string fileName);
 		FileBuffer(string fileName, bool keepOpen);
 		bool test();

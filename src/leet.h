@@ -9,11 +9,12 @@
 using namespace std;
 
 class Leet {
-	public:
-		static const string CONFIG;
-		
+	private:
 		static const regex REGEX_NEWLINE;
 		static const regex REGEX_WHITESPACE;
+
+	public:
+		static const string CONFIG;
 
 		vector<string> from;
 		vector<string> to;

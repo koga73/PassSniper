@@ -12,17 +12,18 @@
 using namespace std;
 
 class Generator {
-	public:
-		Generator(Options*& options, FileBuffer*& fb);
-		void generate();
-		
 	private:
 		static const regex REGEX_COMMA_WHITESPACE;
 		static const regex REGEX_NON_NUMERIC;
 		static const regex REGEX_NUMERIC;
 		static const regex REGEX_LOWERCASE;
 		static const regex REGEX_UPPERCASE;
-
+		
+	public:
+		Generator(Options*& options, FileBuffer*& fb);
+		void generate();
+		
+	private:
 		Options*& options;
 		FileBuffer*& fb;
 		vector<string> words;

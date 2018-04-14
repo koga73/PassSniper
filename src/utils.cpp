@@ -10,25 +10,10 @@
 
 using namespace std;
 
-vector<string> Utils::split(const string& s){
-	return split(s, ',');
-}
-vector<string> Utils::split(const string& s, const char& delim){
-	vector<string> ret;
+const regex Utils::REGEX_COMMA = regex(",");
 
-	//to avoid modifying original string
-    //first duplicate the original string and return a char pointer then free the memory
-    char* dup = strdup(s.c_str());
-    char* token = strtok(dup, &delim);
-    while (token != NULL){
-        ret.push_back(string(token));
-        //the call is treated as a subsequent calls to strtok:
-        //the function continues from where it left in previous invocation
-        token = strtok(NULL, &delim);
-    }
-    free(dup);
-    
-	return ret;
+vector<string> Utils::split(const string& s){
+	return split(s, REGEX_COMMA);
 }
 vector<string> Utils::split(const string& s, const regex& re){
     return {
@@ -78,14 +63,12 @@ string Utils::formatTime(double seconds){
     return to_string(hours) + ":" + sminutes + ":" + sseconds;
 }
 
-string Utils::replaceAll(const string& s, const string& from, const string& to){
-    string replaced = s;
+void Utils::replaceAll(string& s, const string& from, const string& to){
     if(!from.empty()){
         size_t start_pos = 0;
-        while((start_pos = replaced.find(from, start_pos)) != string::npos) {
-            replaced.replace(start_pos, from.length(), to);
+        while((start_pos = s.find(from, start_pos)) != string::npos) {
+            s.replace(start_pos, from.length(), to);
             start_pos += to.length();
         }
     }
-    return replaced;
 }

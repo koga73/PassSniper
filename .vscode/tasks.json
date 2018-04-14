@@ -11,8 +11,10 @@
             },
             "command": "g++",
             "args": [
-                "-g", "src/*.cpp",
-                "-o", "bin/passsniper.exe"
+                "-g",
+                "src/*.cpp",
+                "-o",
+                "bin/passsniper.exe"
             ],
             "group": {
                 "kind": "build",
@@ -34,7 +36,8 @@
             "command": "g++",
             "args": [
                 "src/*.cpp",
-                "-o", "bin/passsniper.exe",
+                "-o",
+                "bin/passsniper.exe",
                 "-O2"
             ],
             "presentation": {
@@ -42,7 +45,8 @@
                 "reveal": "always",
                 "focus": false,
                 "panel": "shared"
-            }
+            },
+            "problemMatcher": []
         }
     ]
 }
