@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const int Generator::DEFAULT_NUM_THREADS = 4;
+const int Generator::DEFAULT_NUM_THREADS = 3;
 
 const regex Generator::REGEX_COMMA_WHITESPACE = regex("[,\\s]");
 const regex Generator::REGEX_NON_NUMERIC = regex("\\D");
