@@ -200,9 +200,14 @@ void* threadCombineEntry(void* obj){
     gen->threadCombine();
 }
 void Generator::combine(int numThreads){
-    if (!numThreads){
-        combine(); //No threading
-        return;
+    switch (numThreads){
+        case 0: //No threading
+            cout << "THREADING DISABLED" << endl;
+            combine();
+            return;
+        default:
+            cout << "THREADING ENABLED | Using " << numThreads << " threads" << endl;
+            break;
     }
     threadWordIndex = 0;
 

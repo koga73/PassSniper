@@ -23,29 +23,32 @@ enum ARGUMENT_INDEX {
     ARGUMENT_INDEX_HELP4 = 3,
     ARGUMENT_INDEX_OUTPUT = 4,
     ARGUMENT_INDEX_GENERATE_LEET = 5,
-    ARGUMENT_INDEX_USE_LEET = 6
+    ARGUMENT_INDEX_USE_LEET = 6,
+    ARGUMENT_INDEX_THREADS = 7
 };
 const char* ARGUMENT_FLAGS[] = {
-    "help",
-    "-help",
     "?",
     "-?",
+    "help",
+    "-help",
     "-o",
     "-gl",
-    "-l"
+    "-l",
+    "-t"
 };
 
 struct arguments {
     MODE mode = MODE_RUN;
     string outputFile = DEFAULT_OUTPUT;
     string leetConfig = DEFAULT_LEET_CONFIG;
+    int threads = Generator::DEFAULT_NUM_THREADS;
 };
 
 shared_ptr<Options> getOptions();
 shared_ptr<Options> getOptions(const string leetConfigData);
 arguments getArguments(int argc, char **argv);
-bool run(const string outputFile, const string leetConfig);
-bool generateLeet(const string leetConfig);
+bool run(const arguments args);
+bool generateLeet(const arguments args);
 int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
 string getString(string defaultVal, string message);
@@ -78,14 +81,15 @@ int main(int argc, char **argv){
                 cout << "    -o  <output>: File to output wordlist" << endl;
                 cout << "    -l  <leetConfig>: File containing leet config" << endl;
                 cout << "    -gl <leetConfig>: Generate leet config file" << endl;
+                cout << "    -t  <numThreads>: Number of threads to use. Pass 0 to disable threading" << endl;
                 break;
             case MODE_RUN:
                 args.outputFile = getString(args.outputFile, "Output File");
-                exitCode = run(args.outputFile, args.leetConfig);
+                exitCode = run(args);
                 break;
             case MODE_CONFIG: 
                 args.leetConfig = getString(args.leetConfig, "Leet File");
-                exitCode = generateLeet(args.leetConfig);
+                exitCode = generateLeet(args);
                 break;
         }
     } catch (ios::failure &ex){
@@ -139,6 +143,10 @@ arguments getArguments(int argc, char **argv){
                 foundFlag = true;
                 args.outputFile = argv[i + 1];
             }
+            if (arg == ARGUMENT_FLAGS[ARGUMENT_INDEX_THREADS] && i + 1 < argc){
+                foundFlag = true;
+                args.threads = stoi(argv[i + 1]);
+            }
         }
         if (!foundFlag && argc == 2){
             args.outputFile = argv[1];
@@ -147,7 +155,7 @@ arguments getArguments(int argc, char **argv){
     return args;
 }
 
-bool run(const string outputFile, const string leetConfig){
+bool run(const arguments args){
     //Warning
     cout << endl;
     cout << "Think before using... don't be a dick." << endl;
@@ -161,7 +169,7 @@ bool run(const string outputFile, const string leetConfig){
     } while (key != 13);
 
     //Test file access
-    shared_ptr<FileBuffer> fb (new FileBuffer(outputFile));
+    shared_ptr<FileBuffer> fb (new FileBuffer(args.outputFile));
     if (!fb->test()){
         throw "Could not open output file.";
     }
@@ -170,7 +178,7 @@ bool run(const string outputFile, const string leetConfig){
     ifstream ifs;
     ifs.exceptions(ios::failbit | ios::badbit);
     try {
-        ifs.open(leetConfig, ios::in); //Open file for input
+        ifs.open(args.leetConfig, ios::in); //Open file for input
         if (ifs && ifs.is_open()){
             string line;
             while (getline(ifs, line)){
@@ -187,15 +195,15 @@ bool run(const string outputFile, const string leetConfig){
 
     //Generate
     unique_ptr<Generator> gen (new Generator(options, fb));
-    gen->generate();
+    gen->generate(args.threads);
 
     return 0;
 }
 
-bool generateLeet(const string leetConfig){
+bool generateLeet(const arguments args){
     ofstream ofs;
     ofs.exceptions(ios::failbit | ios::badbit);
-    ofs.open(leetConfig, ios::out | ios::trunc); //Open file for output and append to eof
+    ofs.open(args.leetConfig, ios::out | ios::trunc); //Open file for output and append to eof
     if (ofs && ofs.is_open()){
         ofs << Leet::CONFIG;
         ofs.close();
