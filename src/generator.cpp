@@ -9,10 +9,14 @@
 
 #include "generator.h"
 #include "utils.h"
+#include "smartword.h"
 
 using namespace std;
 
 const int Generator::DEFAULT_NUM_THREADS = 3;
+
+const int Generator::SAME_WORD_MAX = 2; //Don't have more than this many of the same words together
+const float Generator::MSG_TIME_MIN = 0.5;
 
 const regex Generator::REGEX_COMMA_WHITESPACE = regex("[,\\s]");
 const regex Generator::REGEX_NON_NUMERIC = regex("\\D");
@@ -32,7 +36,8 @@ Generator::~Generator(){
 void Generator::generate(){
     generate(DEFAULT_NUM_THREADS);
 }
-void Generator::generate(int numThreads){
+void Generator::generate(const int numThreads){
+    vector<string> words;
     ksMinOffset = 0;
     if (options->optUsePrepend){
         ksMinOffset++;
@@ -46,6 +51,7 @@ void Generator::generate(int numThreads){
     wordCount = 0;
     beginTime = chrono::system_clock::now();
     lastFlush = chrono::system_clock::now();
+    lastFlush -= chrono::milliseconds((int)(MSG_TIME_MIN * 1000)); //We always want to show at least one message
 
 	int i;
     vector<string> names = Utils::split(options->dataNames, REGEX_COMMA_WHITESPACE);
@@ -85,9 +91,10 @@ void Generator::generate(int numThreads){
     Utils::concat(words, dates);
     Utils::concat(words, numbers);
 
-    filter();
+    filter(words);
     Utils::randomize(words);
-    cases();
+    cases(words);
+    buildSmartWords(words);
     combine(numThreads);
     
     fb->flush();
@@ -101,7 +108,7 @@ void Generator::generate(int numThreads){
 //Too long
 //Contains number if not specified
 //Duplicates
-void Generator::filter(){
+void Generator::filter(vector<string>& words){
     int wordsLen = words.size();
     for (int i = 0; i < wordsLen; i++){
         bool shouldRemove = false;
@@ -137,7 +144,7 @@ void Generator::filter(){
 }
 
 //Build case variations
-void Generator::cases(){
+void Generator::cases(vector<string>& words){
     int wordsLen = words.size();
     for (int i = 0; i < wordsLen; i++){
         string word = words.at(i);
@@ -194,19 +201,31 @@ void Generator::cases(){
     }
 }
 
+void Generator::buildSmartWords(vector<string>& words){
+    smartWords.clear();
+    int wordsLen = words.size();
+    for (int i = 0; i < wordsLen; i++){
+        string& word = words.at(i);
+        string baseWord = word;
+        transform(baseWord.begin(), baseWord.end(), baseWord.begin(), ::tolower);
+        int isNumeric = Utils::isNumeric(word);
+        smartWords.push_back(shared_ptr<SmartWord>(new SmartWord(word, baseWord, isNumeric)));
+    }
+}
+
 //Threading
 void* threadCombineEntry(void* obj){
     Generator* gen = (Generator*)obj;
     gen->threadCombine();
 }
-void Generator::combine(int numThreads){
+void Generator::combine(const int numThreads){
     switch (numThreads){
         case 0: //No threading
-            cout << "THREADING DISABLED" << endl;
+            cout << "THREADING DISABLED" << endl << endl;
             combine();
             return;
         default:
-            cout << "THREADING ENABLED | Using " << numThreads << " threads" << endl;
+            cout << "THREADING ENABLED | Using " << numThreads << " threads" << endl << endl;
             break;
     }
     threadWordIndex = 0;
@@ -226,107 +245,115 @@ void Generator::combine(int numThreads){
     }
 }
 void Generator::threadCombine(){
-    int wordsLen = words.size();
-    while (threadWordIndex < wordsLen){
+    int smartWordsLen = smartWords.size();
+    while (threadWordIndex < smartWordsLen){
         pthread_mutex_lock(&combineMutex);
-            string& word = words.at(threadWordIndex);
+            shared_ptr<SmartWord>& smartWord = smartWords.at(threadWordIndex);
+            int currentIndex = threadWordIndex;
             threadWordIndex++;
         pthread_mutex_unlock(&combineMutex);
-        combine(word, true); //Start at one level past root
+		addVariations(smartWord->word);
+        combine(smartWord->word, smartWord->baseWord); //Start at one level past root
     }
 }
 
 //Combine words to fill keyspace
 void Generator::combine(){
-    combine(""); //Start at root
+    combine("", "", 1);
 }
-void Generator::combine(const string& currentWord){
-    combine(currentWord, false);
+void Generator::combine(const string& currentWord, const string& baseWord){
+    combine(currentWord, baseWord, 1);
 }
-//Are we starting at root or one level past root (multi-threading)
-void Generator::combine(const string& currentWord, bool includeCurrentWord){
+//includeWord - Are we starting at root or one level past root (multi-threading)
+void Generator::combine(const string& currentWord, const string& baseWord, const int sameCount){
     int currentWordLen = currentWord.length();
-    int wordsLen = words.size();
-    //If includeCurrentWord then start at -1 to include currentWord
-    for (int i = (includeCurrentWord) ? -1 : 0; i < wordsLen; i++){
-        string newWord;
-        if (i == -1){
-            newWord = currentWord;
-        } else {
-            newWord = currentWord + words.at(i);
+    int smartWordsLen = smartWords.size();
+    for (int i = 0; i < smartWordsLen; i++){
+        shared_ptr<SmartWord>& smartWord = smartWords.at(i);
+		
+		//Enforce max same words
+        bool isSameWord = smartWord->baseWord == baseWord;
+        if (isSameWord && sameCount >= SAME_WORD_MAX){
+            continue;
         }
+		
+        string newWord = currentWord + smartWord->word;
         int newWordLen = newWord.length();
 
         //Enforce max combined nums
-        string lastBit = newWord.substr(max(newWordLen - options->optMaxCombinedNums - 1, 0));
-        if (lastBit.length() == options->optMaxCombinedNums + 1 && Utils::isNumeric(lastBit)){ //isNumeric
-            continue;
-        }
-
-        if (newWordLen <= options->ksMax){
-            if (newWordLen >= options->ksMin - ksMinOffset){ //minOffset because variant prepend/append will add length
-                vector<string> variants = variations(newWord, currentWordLen);
-                int variantsLen = variants.size();
-                for (int j = 0; j < variantsLen; j++){
-                    addLine(variants.at(j));
-                }
-            }
-
-            //Recurse!
-            if (i != -1 && newWordLen < options->ksMax){
-                combine(newWord);
+        if (smartWord->isNumeric){
+            string lastBit = newWord.substr(max(newWordLen - options->optMaxCombinedNums - 1, 0));
+            if (lastBit.length() == options->optMaxCombinedNums + 1 && Utils::isNumeric(lastBit)){
+                continue;
             }
         }
+
+        addVariations(newWord, currentWordLen);
+
+		//Recurse!
+		if (newWordLen < options->ksMax){
+			combine(newWord, smartWord->baseWord, (isSameWord) ? sameCount + 1 : 1);
+		}
     }
 }
 
-vector<string> Generator::variations(const string& word, const int splitIndex){
+void Generator::addVariations(const string& word){
+	addVariations(word, 0);
+}
+void Generator::addVariations(const string& word, const int splitIndex){
+	int wordLen = word.length();
+	//Check keyspace requirements
+	//minOffset because variant prepend/append will add length
+	if (wordLen < options->ksMin - ksMinOffset || wordLen > options->ksMax){
+		return;
+	}
     vector<string> variations;
     variations.push_back(word);
     
     int i;
     int variationsLen;
+
     //Leet
     if (options->optUseLeet){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
-            vector<string> leets = leet(variations.at(i));
-            Utils::concat(variations, leets);
+            leet(variations, variations.at(i));
         }
     }
     //Reduce Duplicate
-    variationsLen = variations.size();
-    for (i = 0; i < variationsLen; i++){
-        string reduced = reduceDuplicate(variations.at(i), splitIndex);
-        int reducedLen = reduced.length();
-        if (reducedLen && reducedLen >= options->ksMin){
-            variations.push_back(reduced);
-        }
-    }
+	if (splitIndex){
+		variationsLen = variations.size();
+		for (i = 0; i < variationsLen; i++){
+			string reduced = reduceDuplicate(variations.at(i), splitIndex);
+			if (reduced.length() >= options->ksMin){
+				variations.push_back(reduced);
+			}
+		}
+	}
     //Prepend
     if (options->optUsePrepend){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
-            vector<string> prepends = prepend(variations.at(i));
-            Utils::concat(variations, prepends);
+            prepend(variations, variations.at(i));
         }
     }
     //Append
     if (options->optUseAppend){
         variationsLen = variations.size();
         for (i = 0; i < variationsLen; i++){
-            vector<string> appends = append(variations.at(i));
-            Utils::concat(variations, appends);
+            append(variations, variations.at(i));
         }
     }
-
-    return variations;
+	//Add to file
+	variationsLen = variations.size();
+	for (i = 0; i < variationsLen; i++){
+		addLine(variations.at(i));
+	}
 }
 
 //Leet substitution
-vector<string> Generator::leet(const string& word){
+void Generator::leet(vector<string>& words, const string& word){
     vector<string> leets;
-
     string lastWord = word;
     int optLeetsLen = options->optLeets.size();
     for (int i = 0; i < optLeetsLen; i++){
@@ -349,8 +376,7 @@ vector<string> Generator::leet(const string& word){
             }
         }
     }
-
-    return leets;
+	Utils::concat(words, leets);
 }
 
 //Reduce duplicates - "1337" + "70" = "133770" | "133770", 4 = "13370"
@@ -363,9 +389,8 @@ string Generator::reduceDuplicate(const string& word, const int splitIndex){
 }
 
 //Prepend sequences
-vector<string> Generator::prepend(const string& word){
+void Generator::prepend(vector<string>& words, const string& word){
     vector<string> sequences;
-
     vector<string> prependSequences = options->getPrependSequences();
     for (int i = 0; i < prependSequencesLen; i++){
         string newWord = prependSequences.at(i) + word;
@@ -373,14 +398,12 @@ vector<string> Generator::prepend(const string& word){
             sequences.push_back(newWord);
         }
     }
-
-    return sequences;
+	Utils::concat(words, sequences);
 }
 
 //Append sequences
-vector<string> Generator::append(const string& word){
+void Generator::append(vector<string>& words, const string& word){
     vector<string> sequences;
-
     vector<string> appendSequences = options->getAppendSequences();
     for (int i = 0; i < appendSequencesLen; i++){
         string newWord = word + appendSequences.at(i);
@@ -388,25 +411,22 @@ vector<string> Generator::append(const string& word){
             sequences.push_back(newWord);
         }
     }
-
-    return sequences;
+	Utils::concat(words, sequences);
 }
 
 void Generator::addLine(const string& line){
-    bool flushed = fb->addLine(line);
-    if (flushed){
-        chrono::system_clock::time_point now = chrono::system_clock::now();
-        chrono::duration<double> delta = now - lastFlush;
-        int wps = wordCount / delta.count();
-
-        pthread_mutex_lock(&addLineMutex);
-            cout << "Speed (words-per-second): " + Utils::formatCommas(wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
-            wordCount = 0;
-            lastFlush = now;
-        pthread_mutex_unlock(&addLineMutex);
-    }
     pthread_mutex_lock(&addLineMutex);
-        wordCount++;
-        totalWordCount++;
+		bool flushed = fb->addData(line + '\n');
+		if (flushed){
+				chrono::system_clock::time_point now = chrono::system_clock::now();
+				chrono::duration<double> delta = now - lastFlush;
+				if (delta.count() >= MSG_TIME_MIN){
+					cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + line << endl;
+					wordCount = 0;
+					lastFlush = now;
+				}
+		}
+		wordCount++;
+		totalWordCount++;
     pthread_mutex_unlock(&addLineMutex);
 }

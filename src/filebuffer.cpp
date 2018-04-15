@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const int FileBuffer::BUFFER_SIZE;
+const unsigned long FileBuffer::BUFFER_SIZE;
 
 FileBuffer::FileBuffer(string fileName){
 	this->fileName = fileName;
@@ -27,21 +27,19 @@ bool FileBuffer::test(){
 }
 
 //Returns true if flushed
-bool FileBuffer::addLine(string line){
+bool FileBuffer::addData(const string& newData){
 	bool flushed = false;
 
 	pthread_mutex_lock(&mutex);
-		line += "\n";
-		int lineLen = line.length();
-		linesLen = lines.length();
-		if (linesLen + lineLen >= BUFFER_SIZE){
+		unsigned long newDataLen = newData.length();
+		if (dataLen + newDataLen >= BUFFER_SIZE){
 			pthread_mutex_unlock(&mutex);
 			flush();
 			pthread_mutex_lock(&mutex);
 			flushed = true;
 		}
-		lines += line;
-		linesLen += lineLen;
+		data += newData;
+		dataLen += newDataLen;
 	pthread_mutex_unlock(&mutex);
 
 	return flushed;
@@ -58,8 +56,8 @@ void FileBuffer::flush(){
 			}
 		}
 		if (isOpen){
-			if (linesLen >= 0){
-				ofs << lines;
+			if (dataLen){
+				ofs << data;
 			}
 		} else {
 			throw "There was an error opening the output file.";
@@ -69,8 +67,8 @@ void FileBuffer::flush(){
 			close();
 			pthread_mutex_lock(&mutex);
 		}
-		lines = "";
-		linesLen = 0;
+		data = "";
+		dataLen = 0;
 	pthread_mutex_unlock(&mutex);
 }
 

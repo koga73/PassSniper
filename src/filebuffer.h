@@ -9,14 +9,14 @@ using namespace std;
 
 class FileBuffer {
 	private:
-		static const int BUFFER_SIZE = 1024 * 512; //kb
+		static const unsigned long BUFFER_SIZE = 1024 * 1024; //kb
 	
 	public:
 		FileBuffer(string fileName);
 		FileBuffer(string fileName, bool keepOpen);
 		~FileBuffer();
 		bool test();
-		bool addLine(string line);
+		bool addData(const string& data);
 		void flush();
 		void close();
 
@@ -25,8 +25,8 @@ class FileBuffer {
 		string fileName = "";
 		bool keepOpen = false;
 		bool isOpen = false;
-		string lines = "";
-		int linesLen = 0;
+		string data;
+		unsigned long dataLen = 0;
 		ofstream ofs;
 };
 
