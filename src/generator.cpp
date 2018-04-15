@@ -5,11 +5,14 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
+#include <pthread.h>
 
 #include "generator.h"
 #include "utils.h"
 
 using namespace std;
+
+const int Generator::DEFAULT_NUM_THREADS = 4;
 
 const regex Generator::REGEX_COMMA_WHITESPACE = regex("[,\\s]");
 const regex Generator::REGEX_NON_NUMERIC = regex("\\D");
@@ -27,6 +30,9 @@ Generator::~Generator(){
 }
 
 void Generator::generate(){
+    generate(DEFAULT_NUM_THREADS);
+}
+void Generator::generate(int numThreads){
     ksMinOffset = 0;
     if (options->optUsePrepend){
         ksMinOffset++;
@@ -82,7 +88,7 @@ void Generator::generate(){
     filter();
     Utils::randomize(words);
     cases();
-    combine();
+    combine(numThreads);
     
     fb->flush();
 
@@ -188,17 +194,62 @@ void Generator::cases(){
     }
 }
 
+//Threading
+void* threadCombineEntry(void* obj){
+    Generator* gen = (Generator*)obj;
+    gen->threadCombine();
+}
+void Generator::combine(int numThreads){
+    if (!numThreads){
+        combine(); //No threading
+        return;
+    }
+    threadWordIndex = 0;
+
+    pthread_t threads[numThreads];
+    int i;
+    
+    for (i = 0; i < numThreads; i++){
+        int result = pthread_create(&threads[i], NULL, &threadCombineEntry, this);
+        if (result){
+            throw "Thread could not be created.";
+        }
+    }
+    //Wait for threads to complete
+    for (i = 0; i < numThreads; i++){
+        pthread_join(threads[i], NULL);
+    }
+}
+void Generator::threadCombine(){
+    int wordsLen = words.size();
+    while (threadWordIndex < wordsLen){
+        pthread_mutex_lock(&combineMutex);
+            string& word = words.at(threadWordIndex);
+            threadWordIndex++;
+        pthread_mutex_unlock(&combineMutex);
+        combine(word, true); //Start at one level past root
+    }
+}
+
 //Combine words to fill keyspace
 void Generator::combine(){
-    combine("");
+    combine(""); //Start at root
 }
 void Generator::combine(const string& currentWord){
+    combine(currentWord, false);
+}
+//Are we starting at root or one level past root (multi-threading)
+void Generator::combine(const string& currentWord, bool includeCurrentWord){
     int currentWordLen = currentWord.length();
     int wordsLen = words.size();
-    for (int i = 0; i < wordsLen; i++){
-        string& nextWord = words.at(i);
-
-        string newWord = currentWord + nextWord;
+    //If includeCurrentWord then start at -1 to include currentWord
+    for (int i = (includeCurrentWord) ? -1 : 0; i < wordsLen; i++){
+        string newWord;
+        if (i == -1){
+            newWord = currentWord;
+        } else {
+            newWord = currentWord + words.at(i);
+        }
         int newWordLen = newWord.length();
 
         //Enforce max combined nums
@@ -217,7 +268,7 @@ void Generator::combine(const string& currentWord){
             }
 
             //Recurse!
-            if (newWordLen < options->ksMax){
+            if (i != -1 && newWordLen < options->ksMax){
                 combine(newWord);
             }
         }
@@ -343,11 +394,14 @@ void Generator::addLine(const string& line){
         chrono::duration<double> delta = now - lastFlush;
         int wps = wordCount / delta.count();
 
-        cout << "Speed (words-per-second): " + Utils::formatCommas(wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
-        
-        wordCount = 0;
-        lastFlush = now;
+        pthread_mutex_lock(&addLineMutex);
+            cout << "Speed (words-per-second): " + Utils::formatCommas(wps) + " | Word Count: " + Utils::formatCommas(totalWordCount) + " | Current Word: " + line << endl;
+            wordCount = 0;
+            lastFlush = now;
+        pthread_mutex_unlock(&addLineMutex);
     }
-    wordCount++;
-    totalWordCount++;
+    pthread_mutex_lock(&addLineMutex);
+        wordCount++;
+        totalWordCount++;
+    pthread_mutex_unlock(&addLineMutex);
 }

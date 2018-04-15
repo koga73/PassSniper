@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <string>
+#include <pthread.h>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class FileBuffer {
 		void close();
 
 	private:
+		pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 		string fileName = "";
 		bool keepOpen = false;
 		bool isOpen = false;

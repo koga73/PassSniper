@@ -12,6 +12,9 @@
 using namespace std;
 
 class Generator {
+	public:
+		static const int DEFAULT_NUM_THREADS;
+
 	private:
 		static const regex REGEX_COMMA_WHITESPACE;
 		static const regex REGEX_NON_NUMERIC;
@@ -23,6 +26,8 @@ class Generator {
 		Generator(shared_ptr<Options> options, shared_ptr<FileBuffer> fb);
 		~Generator();
 		void generate();
+		void generate(int numThreads);
+		void threadCombine();
 		
 	private:
 		shared_ptr<Options> options;
@@ -35,11 +40,18 @@ class Generator {
 		int wordCount = 0;
 		chrono::system_clock::time_point beginTime;
 		chrono::system_clock::time_point lastFlush;
+
+		pthread_mutex_t combineMutex = PTHREAD_MUTEX_INITIALIZER;
+		pthread_mutex_t addLineMutex = PTHREAD_MUTEX_INITIALIZER;
+		int threadWordIndex = 0;
+		friend void* threadCombineEntry(void*);
 		
 		void filter();
 		void cases();
+		void combine(int numThreads);
 		void combine();
 		void combine(const string& currentWord);
+		void combine(const string& currentWord, bool includeCurrentWord);
 		vector<string> variations(const string& word, const int splitIndex);
 		vector<string> leet(const string& word);
 		string reduceDuplicate(const string& word, const int splitIndex);

@@ -15,6 +15,7 @@
                 "src/*.cpp",
                 "-o",
                 "bin/passsniper.exe",
+                "-lpthread"
             ],
             "group": {
                 "kind": "build",
@@ -38,7 +39,9 @@
                 "src/*.cpp",
                 "-o",
                 "bin/passsniper.exe",
-                "-fauto-inc-dec",
+                "-lpthread",
+                "-O3"
+                /*"-fauto-inc-dec",
                 "-fbranch-count-reg",
                 "-fcombine-stack-adjustments",
                 "-fcompare-elim",
@@ -134,7 +137,7 @@
                 "-fvect-cost-model",
                 "-ftree-partial-pre",
                 "-fpeel-loops",
-                "-fipa-cp-clone"
+                "-fipa-cp-clone"*/
             ],
             "presentation": {
                 "echo": true,

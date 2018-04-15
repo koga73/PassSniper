@@ -12,6 +12,7 @@
         "cstdio": "cpp",
         "cwchar": "cpp",
         "cwctype": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "thread": "cpp"
     }
 }
