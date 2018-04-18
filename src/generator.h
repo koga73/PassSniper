@@ -64,6 +64,7 @@ class Generator {
 		void prepend(vector<string>& words, const string& word);
 		void append(vector<string>& words, const string& word);
 		void addLine(const string& line);
+		void addLines(const vector<string>& lines);
 };
 
 #endif

@@ -27,20 +27,30 @@ bool FileBuffer::test(){
 }
 
 //Returns true if flushed
-bool FileBuffer::addData(const string& newData){
+bool FileBuffer::addLine(const string& line){
 	bool flushed = false;
 
+	unsigned long newDataLen = line.length() + 1; //'\n'
+	if (dataLen + newDataLen >= BUFFER_SIZE){
+		flush();
+		flushed = true;
+	}
 	pthread_mutex_lock(&mutex);
-		unsigned long newDataLen = newData.length();
-		if (dataLen + newDataLen >= BUFFER_SIZE){
-			pthread_mutex_unlock(&mutex);
-			flush();
-			pthread_mutex_lock(&mutex);
-			flushed = true;
-		}
-		data += newData;
+		data += line + '\n';
 		dataLen += newDataLen;
 	pthread_mutex_unlock(&mutex);
+
+	return flushed;
+}
+
+//Returns true if flushed
+bool FileBuffer::addLines(const vector<string>& lines){
+	bool flushed = false;
+
+	int linesLen = lines.size();
+	for (int i = 0; i < linesLen; i++){
+		flushed |= addLine(lines.at(i));
+	}
 
 	return flushed;
 }

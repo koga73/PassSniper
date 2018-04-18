@@ -345,10 +345,7 @@ void Generator::addVariations(const string& word, const int splitIndex){
         }
     }
 	//Add to file
-	variationsLen = variations.size();
-	for (i = 0; i < variationsLen; i++){
-		addLine(variations.at(i));
-	}
+	addLines(variations);
 }
 
 //Leet substitution
@@ -416,17 +413,39 @@ void Generator::append(vector<string>& words, const string& word){
 
 void Generator::addLine(const string& line){
     pthread_mutex_lock(&addLineMutex);
-		bool flushed = fb->addData(line + '\n');
+		bool flushed = fb->addLine(line);
 		if (flushed){
-				chrono::system_clock::time_point now = chrono::system_clock::now();
-				chrono::duration<double> delta = now - lastFlush;
-				if (delta.count() >= MSG_TIME_MIN){
-					cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + line << endl;
-					wordCount = 0;
-					lastFlush = now;
-				}
+			chrono::system_clock::time_point now = chrono::system_clock::now();
+			chrono::duration<double> delta = now - lastFlush;
+			if (delta.count() >= MSG_TIME_MIN){
+				cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + line << endl;
+				wordCount = 0;
+				lastFlush = now;
+			}
 		}
 		wordCount++;
 		totalWordCount++;
+    pthread_mutex_unlock(&addLineMutex);
+}
+
+void Generator::addLines(const vector<string>& lines){
+	int linesLen = lines.size();
+    pthread_mutex_lock(&addLineMutex);
+		bool flushed = fb->addLines(lines);
+    pthread_mutex_unlock(&addLineMutex);
+	if (flushed){
+		chrono::system_clock::time_point now = chrono::system_clock::now();
+		chrono::duration<double> delta = now - lastFlush;
+		if (delta.count() >= MSG_TIME_MIN){
+			cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + lines.at(linesLen - 1) << endl;
+			pthread_mutex_lock(&addLineMutex);
+				wordCount = 0;
+				lastFlush = now;
+			pthread_mutex_unlock(&addLineMutex);
+		}
+	}
+    pthread_mutex_lock(&addLineMutex);
+		wordCount += linesLen;
+		totalWordCount += linesLen;
     pthread_mutex_unlock(&addLineMutex);
 }

@@ -2,6 +2,7 @@
 #define ___FILE_BUFFER___
 
 #include <fstream>
+#include <vector>
 #include <string>
 #include <pthread.h>
 
@@ -16,7 +17,8 @@ class FileBuffer {
 		FileBuffer(string fileName, bool keepOpen);
 		~FileBuffer();
 		bool test();
-		bool addData(const string& data);
+		bool addLine(const string& line);
+		bool addLines(const vector<string>& lines);
 		void flush();
 		void close();
 
