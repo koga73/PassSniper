@@ -55,16 +55,17 @@ string getString(string defaultVal, string message);
 string getString();
 
 int main(int argc, char **argv){
-    cout << "    ____                  _____       _                " << endl;
-    cout << "   / __ \\____ ___________/ ___/____  (_)___  ___  _____" << endl;
-    cout << "  / /_/ / __ `/ ___/ ___/\\__ \\/ __ \\/ / __ \\/ _ \\/ ___/" << endl;
-    cout << " / ____/ /_/ (__  |__  )___/ / / / / / /_/ /  __/ /    " << endl;
-    cout << "/_/    \\__,_/____/____//____/_/ /_/_/ .___/\\___/_/     " << endl;
-    cout << "                                   /_/                 " << endl;
+	cout << endl;
+    cout << "     -o00 00o-        ____                  _____       _                     " << endl;
+    cout << "   -o0   |   0o-     / __ \\____ ___________/ ___/____  (_)___  ___  _____    " << endl;
+    cout << " -o0           0o-  / /_/ / __ `/ ___/ ___/\\__ \\/ __ \\/ / __ \\/ _ \\/ ___/" << endl;
+    cout << " -o0 --  x  -- 0o- / ____/ /_/ (__  |__  )___/ / / / / / /_/ /  __/ /         " << endl;
+    cout << " -o0           0o-/_/    \\__,_/____/____//____/_/ /_/_/ .___/\\___/_/        " << endl;
+    cout << "   -o0   |   0o-                                     /_/                      " << endl;
+    cout << "     -o00 00o-    Generating targeted wordlists for pentesting                " << endl;
     cout << endl;
-    cout << "PassSniper v1.0.0 - AJ Savino" << endl;
-    cout << "Generating targeted wordlists for pentesting" << endl;
     cout << endl;
+    cout << "PassSniper v1.0.0 - By AJ Savino" << endl;
     cout << "CLI Usage:" << endl;
     cout << "  passsniper <output>" << endl;
     cout << "    -?  Show commands" << endl;
@@ -78,10 +79,10 @@ int main(int argc, char **argv){
             default:
             case MODE_HELP:
                 cout << "  passsniper [Options]" << endl;
-                cout << "    -o  <output>: File to output wordlist" << endl;
-                cout << "    -l  <leetConfig>: File containing leet config" << endl;
-                cout << "    -gl <leetConfig>: Generate leet config file" << endl;
-                cout << "    -t  <numThreads>: Number of threads to use. Pass 0 to disable threading" << endl;
+                cout << "    -o  <output>     : File to output wordlist     | Default: '" + DEFAULT_OUTPUT + "'" << endl;
+                cout << "    -l  <leetConfig> : File containing leet config | Default: '" + DEFAULT_LEET_CONFIG + "'" << endl;
+                cout << "    -gl <leetConfig> : Generate leet config file   | Default: '" + DEFAULT_LEET_CONFIG + "'"  << endl;
+                cout << "    -t  <numThreads> : Number of threads to use    | Default: '" + to_string(Generator::DEFAULT_NUM_THREADS) + "' - Pass '0' to disable threading"  << endl;
                 break;
             case MODE_RUN:
                 args.outputFile = getString(args.outputFile, "Output File");

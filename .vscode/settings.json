@@ -1,20 +1,21 @@
 {
-    "files.associations": {
-        "iostream": "cpp",
-        "ostream": "cpp",
-        "*.tcc": "cpp",
-        "fstream": "cpp",
-        "initializer_list": "cpp",
-        "array": "cpp",
-        "bitset": "cpp",
-        "utility": "cpp",
-        "cctype": "cpp",
-        "cstdio": "cpp",
-        "cwchar": "cpp",
-        "cwctype": "cpp",
-        "chrono": "cpp",
-        "thread": "cpp"
-    },
+	"files.associations": {
+		"iostream": "cpp",
+		"ostream": "cpp",
+		"*.tcc": "cpp",
+		"fstream": "cpp",
+		"initializer_list": "cpp",
+		"array": "cpp",
+		"bitset": "cpp",
+		"utility": "cpp",
+		"cctype": "cpp",
+		"cstdio": "cpp",
+		"cwchar": "cpp",
+		"cwctype": "cpp",
+		"chrono": "cpp",
+		"thread": "cpp",
+		"system_error": "cpp"
+	},
     "editor.tabSize": 4,
     "editor.insertSpaces": false,
     "editor.detectIndentation": false
