@@ -47,12 +47,14 @@ struct arguments {
 shared_ptr<Options> getOptions();
 shared_ptr<Options> getOptions(const string leetConfigData);
 arguments getArguments(int argc, char **argv);
+void showWarning();
 bool run(const arguments args);
 bool generateLeet(const arguments args);
 int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
 string getString(string defaultVal, string message);
 string getString();
+char waitForKey(vector<char>& keys, string message);
 
 int main(int argc, char **argv){
 	cout << endl;
@@ -85,6 +87,7 @@ int main(int argc, char **argv){
                 cout << "    -t  <numThreads> : Number of threads to use    | Default: '" + to_string(Generator::DEFAULT_NUM_THREADS) + "' - Pass '0' to disable threading"  << endl;
                 break;
             case MODE_RUN:
+				showWarning();
                 args.outputFile = getString(args.outputFile, "Output File");
                 exitCode = run(args);
                 break;
@@ -156,19 +159,17 @@ arguments getArguments(int argc, char **argv){
     return args;
 }
 
-bool run(const arguments args){
-    //Warning
+void showWarning(){
     cout << endl;
     cout << "Think before using... don't be a dick." << endl;
-    char key;
-    do {
-        cout << "Press [ENTER] to assert that you are not being a dick or [ESCAPE] to exit" << endl;
-        key = getch();
-        if (key == 27){
-            exit(0);
-        }
-    } while (key != 13);
+    vector<char> keys {13, 27};
+	char key = waitForKey(keys, "Press [ENTER] to assert that you are not being a dick or [ESCAPE] to exit");
+	if (key == 27){
+		exit(0);
+	}
+}
 
+bool run(const arguments args){
     //Test file access
     shared_ptr<FileBuffer> fb (new FileBuffer(args.outputFile));
     if (!fb->test()){
@@ -221,31 +222,17 @@ shared_ptr<Options> getOptions(){
 shared_ptr<Options> getOptions(const string leetConfigData){
     shared_ptr<Options> options (new Options(Leet::parse(leetConfigData)));
     
-    //Target
     bool isDemo;
     bool isOrganization;
     bool isIndividual;
-    do {
-        string target;
-        cout << endl;
-        cout << "Select wordlist generation target:" << endl;
-        cout << "  [0] Demo - Organization" << endl;
-        cout << "  [1] Organization" << endl;
-        cout << "  [2] Invididual" << endl;
-        cout << ":";
-        cin.clear();
-        cin.sync();
-        getline(cin, target);
+	cout << endl;
+	cout << "Select wordlist generation target:" << endl;
+	vector<char> targetKeys {49, 50, 13};
+	int targetKey = waitForKey(targetKeys, "[1] Organization | [2] Invididual | [ENTER] Demo Organiztion");
+	isOrganization = targetKey == 49;
+	isIndividual = targetKey == 50;
+	isDemo = targetKey == 13;
 
-        isDemo = target == "0";
-        isOrganization = target == "1";
-        isIndividual = target == "2";
-        if (isDemo || isOrganization || isIndividual){
-            break;
-        } else {
-            cout << endl << "Please type '0', '1' or '2' and press [ENTER]" << endl;
-        }
-    } while (true);
     if (isDemo){
         options->demoOrganization();
         return options;
@@ -299,31 +286,37 @@ shared_ptr<Options> getOptions(const string leetConfigData){
     }
     options->dataNumbers = getString();
 
-    cout << endl << "Keyspace and Options... if you're unsure just press enter to use the default value" << endl;
-
-    options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
-    if (options->ksMin < Options::KS_MIN || options->ksMin > Options::KS_MAX){
-        throw "Invalid keyspace - minimum length must be between " + to_string(Options::KS_MIN) + " and " + to_string(Options::KS_MAX) + ".";
-    }
-    options->ksMax = getNum(Options::DEFAULT_KS_MAX, "Keyspace - Maximum Length");
-    if (options->ksMax < options->ksMin || options->ksMax > Options::KS_MAX){
-        throw "Invalid keyspace - maximum length must be between " + to_string(options->ksMin) + " and " + to_string(Options::KS_MAX) + ".";
-    }
-    options->ksUseLower = getBool(Options::DEFAULT_KS_USE_LOWER, "Keyspace - Lowercase");
-    options->ksUseUpper = getBool(Options::DEFAULT_KS_USE_UPPER, "Keyspace - Uppercase");
-    options->ksUseNum = getBool(Options::DEFAULT_KS_USE_NUM, "Keyspace - Numbers");
-    if (options->ksUseNum){
-        options->optMaxCombinedNums = getNum(Options::DEFAULT_OPT_MAX_COMBINED_NUMS, "Option - Maximum Combined Numbers (Example (4) = 'password12' = 'password1234')");
-    }
-    options->optUseLeet = getBool(Options::DEFAULT_OPT_LEET, "Option - Leet Substitution (Example 'e' > '3')");
-    options->optUsePrepend = getBool(Options::DEFAULT_OPT_USE_PREPEND, "Option - Prepend sequences (Example 'password' = '123password')");
-    if (options->optUsePrepend){
-        options->optPrepend = getString(Options::DEFAULT_OPT_PREPEND, "Option - Prepend Sequences (Comma Separated)");
-    }
-    options->optUseAppend = getBool(Options::DEFAULT_OPT_USE_APPEND, "Option - Append sequences (Example 'password' = 'password123')");
-    if (options->optUseAppend){
-        options->optAppend = getString(Options::DEFAULT_OPT_APPEND, "Option - Append Sequences (Comma Separated)");
-    }
+	vector<char> optionsKeys {66, 98, 65, 97, 13};
+	cout << endl << "Keyspace and Options:" << endl;
+	int optionKey = waitForKey(optionsKeys, "[B]asic | [A]dvanced | [ENTER] for defaults");
+	bool useBasic = optionKey == 66 || optionKey == 98;
+	bool useAdvanced = optionKey == 65 || optionKey == 97;
+	bool useDefault = optionKey == 13;
+	if (!useDefault){
+		options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
+		if (options->ksMin < Options::KS_MIN || options->ksMin > Options::KS_MAX){
+			throw "Invalid keyspace - minimum length must be between " + to_string(Options::KS_MIN) + " and " + to_string(Options::KS_MAX) + ".";
+		}
+		options->ksMax = getNum(Options::DEFAULT_KS_MAX, "Keyspace - Maximum Length");
+		if (options->ksMax < options->ksMin || options->ksMax > Options::KS_MAX){
+			throw "Invalid keyspace - maximum length must be between " + to_string(options->ksMin) + " and " + to_string(Options::KS_MAX) + ".";
+		}
+		options->ksUseLower = getBool(Options::DEFAULT_KS_USE_LOWER, "Keyspace - Lowercase");
+		options->ksUseUpper = getBool(Options::DEFAULT_KS_USE_UPPER, "Keyspace - Uppercase");
+		options->ksUseNum = getBool(Options::DEFAULT_KS_USE_NUM, "Keyspace - Numbers");
+		if (useAdvanced && options->ksUseNum){
+			options->optMaxCombinedNums = getNum(Options::DEFAULT_OPT_MAX_COMBINED_NUMS, "Option - Maximum Combined Numbers (Example (4) = 'password12' = 'password1234')");
+		}
+		options->optUseLeet = getBool(Options::DEFAULT_OPT_LEET, "Option - Leet Substitution (Example 'e' > '3')");
+		options->optUsePrepend = getBool(Options::DEFAULT_OPT_USE_PREPEND, "Option - Prepend sequences (Example 'password' = '123password')");
+		if (useAdvanced && options->optUsePrepend){
+			options->optPrepend = getString(Options::DEFAULT_OPT_PREPEND, "Option - Prepend Sequence values (Comma Separated)");
+		}
+		options->optUseAppend = getBool(Options::DEFAULT_OPT_USE_APPEND, "Option - Append sequences (Example 'password' = 'password123')");
+		if (useAdvanced && options->optUseAppend){
+			options->optAppend = getString(Options::DEFAULT_OPT_APPEND, "Option - Append Sequence values (Comma Separated)");
+		}
+	}
 
     return options;
 }
@@ -392,4 +385,19 @@ string getString(string defaultVal, string message){
         val = input;
     }
     return val;
+}
+
+char waitForKey(vector<char>& keys, string message){
+	int keysLen = keys.size();
+	char key;
+    do {
+        cout << endl << message;
+        key = getch();
+		for (int i = 0; i < keysLen; i++){
+			if (key == keys.at(i)){
+				cout << endl;
+				return key;
+			}
+		}
+    } while (true);
 }
