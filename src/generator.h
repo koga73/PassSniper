@@ -40,11 +40,12 @@ class Generator {
 		int ksMinOffset = 0;
 		int prependSequencesLen = 0;
 		int appendSequencesLen = 0;
-		unsigned int totalWordCount = 0;
 		unsigned int wordCount = 0;
+		unsigned long totalWordCount = 0;
 		chrono::system_clock::time_point beginTime;
 		chrono::system_clock::time_point lastFlush;
 
+		//Threading
 		pthread_mutex_t combineMutex = PTHREAD_MUTEX_INITIALIZER;
 		pthread_mutex_t addLineMutex = PTHREAD_MUTEX_INITIALIZER;
 		int threadWordIndex = 0;

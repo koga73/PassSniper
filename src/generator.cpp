@@ -101,7 +101,7 @@ void Generator::generate(const int numThreads){
 
     chrono::system_clock::time_point now = chrono::system_clock::now();
     chrono::duration<double> delta = now - beginTime;
-    cout << endl << "Complete! Generated: " + Utils::formatCommas(totalWordCount) + " in " + Utils::formatTime(delta.count()) << endl;
+    cout << endl << "Complete! Generated: " + Utils::formatCommas(to_string(totalWordCount)) + " in " + Utils::formatTime(delta.count()) << endl;
 }
 
 //Empty
@@ -418,7 +418,8 @@ void Generator::addLine(const string& line){
 			chrono::system_clock::time_point now = chrono::system_clock::now();
 			chrono::duration<double> delta = now - lastFlush;
 			if (delta.count() >= MSG_TIME_MIN){
-				cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + line << endl;
+				int wps = wordCount / delta.count();
+				cout << "Words-Per-Second: " + Utils::formatCommas(to_string(wps)) + " | Total Words: " + Utils::formatCommas(to_string(totalWordCount)) + " | Last Word: " + line << endl;
 				wordCount = 0;
 				lastFlush = now;
 			}
@@ -437,7 +438,8 @@ void Generator::addLines(const vector<string>& lines){
 		chrono::system_clock::time_point now = chrono::system_clock::now();
 		chrono::duration<double> delta = now - lastFlush;
 		if (delta.count() >= MSG_TIME_MIN){
-			cout << "Words-Per-Second: " + Utils::formatCommas((int)(wordCount / delta.count())) + " | Total Words: " + Utils::formatCommas(totalWordCount) + " | Last Word: " + lines.at(linesLen - 1) << endl;
+			int wps = wordCount / delta.count();
+			cout << "Words-Per-Second: " + Utils::formatCommas(to_string(wps)) + " | Total Words: " + Utils::formatCommas(to_string(totalWordCount)) + " | Last Word: " + lines.at(linesLen - 1) << endl;
 			pthread_mutex_lock(&addLineMutex);
 				wordCount = 0;
 				lastFlush = now;

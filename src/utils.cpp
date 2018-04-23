@@ -38,8 +38,8 @@ bool Utils::isNumeric(const string& s){
     }) == s.end();
 }
 
-string Utils::formatCommas(int val){
-    string formatted = to_string(val);
+string Utils::formatCommas(const string& s){
+    string formatted = s;
     int insertPosition = formatted.length() - 3;
     while (insertPosition > 0){
         formatted.insert(insertPosition, ",");

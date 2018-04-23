@@ -17,7 +17,7 @@ class Utils {
 		static void concat(vector<string>& vecA, vector<string>& vecB);
 		static void randomize(vector<string>& vec);
 		static bool isNumeric(const string& s);
-		static string formatCommas(int val);
+		static string formatCommas(const string& s);
 		static string formatTime(double seconds);
 		static void replaceAll(string& s, const string& from, const string& to);
 };

@@ -161,7 +161,7 @@ arguments getArguments(int argc, char **argv){
 
 void showWarning(){
     cout << endl;
-    cout << "Think before using... don't be a dick." << endl;
+    cout << "Think before using... don't be a dick.";
     vector<char> keys {13, 27};
 	char key = waitForKey(keys, "Press [ENTER] to assert that you are not being a dick or [ESCAPE] to exit");
 	if (key == 27){
@@ -226,7 +226,7 @@ shared_ptr<Options> getOptions(const string leetConfigData){
     bool isOrganization;
     bool isIndividual;
 	cout << endl;
-	cout << "Select wordlist generation target:" << endl;
+	cout << "Select wordlist generation target:";
 	vector<char> targetKeys {49, 50, 13};
 	int targetKey = waitForKey(targetKeys, "[1] Organization | [2] Invididual | [ENTER] Demo Organiztion");
 	isOrganization = targetKey == 49;
@@ -286,8 +286,8 @@ shared_ptr<Options> getOptions(const string leetConfigData){
     }
     options->dataNumbers = getString();
 
+	cout << endl << "Keyspace and Options:";
 	vector<char> optionsKeys {66, 98, 65, 97, 13};
-	cout << endl << "Keyspace and Options:" << endl;
 	int optionKey = waitForKey(optionsKeys, "[B]asic | [A]dvanced | [ENTER] for defaults");
 	bool useBasic = optionKey == 66 || optionKey == 98;
 	bool useAdvanced = optionKey == 65 || optionKey == 97;
