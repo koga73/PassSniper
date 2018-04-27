@@ -9,7 +9,7 @@
 			"options": {
 				"cwd": "${workspaceRoot}"
 			},
-			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/x86_64-w64-mingw32-g++.exe",
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
 			"args": [
 				"-g",
 				"src/*.cpp",
@@ -34,7 +34,7 @@
 			"options": {
 				"cwd": "${workspaceRoot}"
 			},
-			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
+			"command": "C:/Program Files (x86)/mingw-w64/i686-7.3.0-posix-dwarf-rt_v5-rev0/mingw32/bin/g++.exe",
 			"args": [
 				"-g",
 				"src/*.cpp",
@@ -55,11 +55,12 @@
 			"options": {
 				"cwd": "${workspaceRoot}"
 			},
-			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/x86_64-w64-mingw32-g++.exe",
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
 			"args": [
 				"src/*.cpp",
 				"-o",
 				"bin/passsniper64.exe",
+				"-static",
 				"-lpthread",
 				"-O3"
 			],
@@ -81,11 +82,12 @@
 			"options": {
 				"cwd": "${workspaceRoot}"
 			},
-			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
+			"command": "C:/Program Files (x86)/mingw-w64/i686-7.3.0-posix-dwarf-rt_v5-rev0/mingw32/bin/g++.exe",
 			"args": [
 				"src/*.cpp",
 				"-o",
 				"bin/passsniper32.exe",
+				"-static",
 				"-lpthread",
 				"-O3"
 			],
