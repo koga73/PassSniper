@@ -2,150 +2,100 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "command": "g++",
-            "args": [
-                "-g",
-                "src/*.cpp",
-                "-o",
-                "bin/passsniper.exe",
-                "-lpthread"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            }
-        },
-        {
-            "label": "build-release",
-            "type": "shell",
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "command": "g++",
-            "args": [
-                "src/*.cpp",
-                "-o",
-                "bin/passsniper.exe",
-                "-lpthread",
-                "-O3"
-                /*"-fauto-inc-dec",
-                "-fbranch-count-reg",
-                "-fcombine-stack-adjustments",
-                "-fcompare-elim",
-                "-fcprop-registers",
-                "-fdce",
-                "-fdefer-pop",
-                "-fdse",
-                "-fforward-propagate",
-                "-fguess-branch-probability",
-                "-fif-conversion2",
-                "-fif-conversion",
-                "-finline-functions-called-once",
-                "-fipa-pure-const",
-                "-fipa-profile",
-                "-fipa-reference",
-                "-fmerge-constants",
-                "-fmove-loop-invariants",
-                "-fomit-frame-pointer",
-                "-freorder-blocks",
-                "-fshrink-wrap",
-                "-fsplit-wide-types",
-                "-fssa-backprop",
-                "-fssa-phiopt",
-                "-ftree-bit-ccp",
-                "-ftree-ccp",
-                "-ftree-ch",
-                "-ftree-coalesce-vars",
-                "-ftree-copy-prop",
-                "-ftree-dce",
-                "-ftree-dominator-opts",
-                "-ftree-dse",
-                "-ftree-forwprop",
-                "-ftree-fre",
-                "-ftree-phiprop",
-                "-ftree-sink",
-                "-ftree-slsr",
-                "-ftree-sra",
-                "-ftree-pta",
-                "-ftree-ter",
-                "-funit-at-a-time",
-                "-fthread-jumps",
-                "-falign-functions",
-                "-falign-jumps",
-                "-falign-loops",
-                "-falign-labels",
-                "-fcaller-saves",
-                "-fcrossjumping",
-                "-fcse-follow-jumps",
-                "-fcse-skip-blocks",
-                "-fdelete-null-pointer-checks",
-                "-fdevirtualize",
-                "-fdevirtualize-speculatively",
-                "-fexpensive-optimizations",
-                "-fgcse",
-                "-fgcse-lm",
-                "-fhoist-adjacent-loads",
-                "-finline-small-functions",
-                "-findirect-inlining",
-                "-fipa-cp",
-                "-fipa-sra",
-                "-fipa-icf",
-                "-fisolate-erroneous-paths-dereference",
-                "-flra-remat",
-                "-foptimize-sibling-calls",
-                "-foptimize-strlen",
-                "-fpartial-inlining",
-                "-fpeephole2",
-                "-freorder-blocks-algorithm=stc",
-                "-freorder-blocks-and-partition",
-                "-freorder-functions",
-                "-frerun-cse-after-loop",
-                "-fsched-interblock",
-                "-fsched-spec",
-                "-fschedule-insns",
-                "-fschedule-insns2",
-                "-fstrict-aliasing",
-                "-ftree-builtin-call-dce",
-                "-ftree-switch-conversion",
-                "-ftree-tail-merge",
-                "-ftree-pre",
-                "-ftree-vrp",
-                "-fipa-ra",
-                "-finline-functions",
-                "-funswitch-loops",
-                "-fpredictive-commoning",
-                "-fgcse-after-reload",
-                "-ftree-loop-vectorize",
-                "-ftree-loop-distribution",
-                "-ftree-loop-distribute-patterns",
-                "-floop-interchange",
-                "-fsplit-paths",
-                "-ftree-slp-vectorize",
-                "-fvect-cost-model",
-                "-ftree-partial-pre",
-                "-fpeel-loops",
-                "-fipa-cp-clone"*/
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "problemMatcher": []
-        }
-    ]
+	"tasks": [
+		{
+			"label": "build64-debug",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/x86_64-w64-mingw32-g++.exe",
+			"args": [
+				"-g",
+				"src/*.cpp",
+				"-o",
+				"bin/passsniper64.exe",
+				"-lpthread"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "build32-debug",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
+			"args": [
+				"-g",
+				"src/*.cpp",
+				"-o",
+				"bin/passsniper32.exe",
+				"-lpthread"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "build64-release",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/x86_64-w64-mingw32-g++.exe",
+			"args": [
+				"src/*.cpp",
+				"-o",
+				"bin/passsniper64.exe",
+				"-lpthread",
+				"-O3"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "build32-release",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/Program Files/mingw-w64/x86_64-7.3.0-posix-seh-rt_v5-rev0/mingw64/bin/g++.exe",
+			"args": [
+				"src/*.cpp",
+				"-o",
+				"bin/passsniper32.exe",
+				"-lpthread",
+				"-O3"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		}
+	]
 }
