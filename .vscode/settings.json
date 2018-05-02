@@ -14,7 +14,8 @@
 		"cwctype": "cpp",
 		"chrono": "cpp",
 		"thread": "cpp",
-		"system_error": "cpp"
+		"system_error": "cpp",
+		"string_view": "cpp"
 	},
     "editor.tabSize": 4,
     "editor.insertSpaces": false,

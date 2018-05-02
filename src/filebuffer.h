@@ -14,21 +14,16 @@ class FileBuffer {
 	
 	public:
 		FileBuffer(string fileName);
-		FileBuffer(string fileName, bool keepOpen);
-		~FileBuffer();
 		bool test();
 		bool addLine(const string& line);
 		bool addLines(const vector<string>& lines);
 		void flush();
-		void close();
 
 	private:
-		pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-		string fileName = "";
-		bool keepOpen = false;
-		bool isOpen = false;
+		pthread_mutex_t mutex;
+		string fileName;
 		string data;
-		unsigned long dataLen = 0;
+		unsigned long dataLen;
 		ofstream ofs;
 };
 
