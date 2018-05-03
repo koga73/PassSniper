@@ -9,13 +9,13 @@
 			"options": {
 				"cwd": "${workspaceRoot}"
 			},
-			//"command": "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/bin/g++.exe",
-			"command": "g++.exe", //x64 NEEDS TO BE IN "PATH"
+			"command": "g++.exe",
 			"args": [
+				"-D_DEBUG",
 				"-g",
 				"src/*.cpp",
 				"-o",
-				"bin/passsniper64.exe",
+				"bin/debug_passsniper64.exe",
 				"-lpthread"
 			],
 			"presentation": {
@@ -33,10 +33,11 @@
 			},
 			"command": "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/bin/g++.exe",
 			"args": [
+				"-D_DEBUG",
 				"-g",
 				"src/*.cpp",
 				"-o",
-				"bin/passsniper32.exe",
+				"bin/debug_passsniper32.exe",
 				"-lpthread"
 			],
 			"presentation": {
@@ -49,8 +50,7 @@
 		{
 			"label": "build64-release",
 			"type": "shell",
-			//"command": "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/bin/g++.exe",
-			"command": "g++.exe", //x64 NEEDS TO BE IN "PATH"
+			"command": "g++.exe",
 			"args": [
 				"src/*.cpp",
 				"-o",
@@ -64,7 +64,8 @@
 				"reveal": "always",
 				"focus": false,
 				"panel": "shared"
-			}
+			},
+			"problemMatcher": []
 		},
 		{
 			"label": "build32-release",
@@ -86,7 +87,8 @@
 				"reveal": "always",
 				"focus": false,
 				"panel": "shared"
-			}
+			},
+			"problemMatcher": []
 		}
 	]
 }

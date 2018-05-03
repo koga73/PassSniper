@@ -22,6 +22,7 @@ const bool Options::DEFAULT_OPT_USE_PREPEND = true;
 const string Options::DEFAULT_OPT_PREPEND = "!,.,@,#,1";
 const bool Options::DEFAULT_OPT_USE_APPEND = true;
 const string Options::DEFAULT_OPT_APPEND = "!,.,@,#,1,123";
+const int Options::DEFAULT_OPT_MAX_SAME_WORDS = 2;
 
 Options::Options(vector<shared_ptr<Leet>> optLeets){
 	this->optLeets = optLeets;
@@ -79,6 +80,7 @@ ostream& operator<<(ostream& os, const shared_ptr<Options> obj){
 	os << "optPrepend: " << obj->optPrepend << endl;
 	os << "optUseAppend: " << obj->optUseAppend << endl;
 	os << "optAppend: " << obj->optAppend << endl;
+	os << "optMaxSameWords: " << obj->optMaxSameWords << endl;
 
 	return os;
 }

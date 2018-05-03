@@ -316,6 +316,9 @@ shared_ptr<Options> getOptions(const string leetConfigData){
 		if (useAdvanced && options->optUseAppend){
 			options->optAppend = getString(Options::DEFAULT_OPT_APPEND, "Option - Append Sequence values (Comma Separated)");
 		}
+		if (useAdvanced){
+			options->optMaxSameWords = getNum(Options::DEFAULT_OPT_MAX_SAME_WORDS, "Option - Maximum Same Words (Example (2) = 'passwordpassword')");
+		}
 	}
 
     return options;

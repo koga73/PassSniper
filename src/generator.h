@@ -5,6 +5,8 @@
 #include <string>
 #include <regex>
 #include <chrono>
+#include <pthread.h>
+#include <unordered_map>
 
 #include "filebuffer.h"
 #include "options.h"
@@ -17,7 +19,6 @@ class Generator {
 		static const int DEFAULT_NUM_THREADS;
 
 	private:
-		static const int SAME_WORD_MAX;
 		static const float MSG_TIME_MIN;
 
 		static const regex REGEX_COMMA_WHITESPACE;
@@ -46,8 +47,8 @@ class Generator {
 		chrono::system_clock::time_point lastFlush;
 
 		//Threading
-		pthread_mutex_t combineMutex = PTHREAD_MUTEX_INITIALIZER;
-		pthread_mutex_t addLineMutex = PTHREAD_MUTEX_INITIALIZER;
+		pthread_mutex_t combineMutex;
+		pthread_mutex_t addLineMutex;
 		int threadWordIndex = 0;
 		friend void* threadCombineEntry(void*);
 		
@@ -56,8 +57,7 @@ class Generator {
 		void buildSmartWords(vector<string>& words);
 		void combine(const int numThreads);
 		void combine();
-		void combine(const string& currentWord, const string& baseWord);
-		void combine(const string& currentWord, const string& baseWord, const int sameCount);
+		void combine(const string& currentWord, unordered_map<string, unsigned char> wordCounts);
 		void addVariations(const string& word);
 		void addVariations(const string& word, const int splitIndex);
 		void leet(vector<string>& words, const string& word);

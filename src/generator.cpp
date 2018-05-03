@@ -6,6 +6,7 @@
 #include <chrono>
 #include <ctime>
 #include <pthread.h>
+#include <unordered_map>
 
 #include "generator.h"
 #include "utils.h"
@@ -15,7 +16,6 @@ using namespace std;
 
 const int Generator::DEFAULT_NUM_THREADS = 3;
 
-const int Generator::SAME_WORD_MAX = 2; //Don't have more than this many of the same words together
 const float Generator::MSG_TIME_MIN = 0.5;
 
 const regex Generator::REGEX_COMMA_WHITESPACE = regex("[,\\s]");
@@ -27,6 +27,9 @@ const regex Generator::REGEX_UPPERCASE = regex("[A-Z]");
 Generator::Generator(shared_ptr<Options> options, shared_ptr<FileBuffer> fb){
     this->options = options;
     this->fb = fb;
+
+	pthread_mutex_init(&combineMutex, NULL);
+	pthread_mutex_init(&addLineMutex, NULL);
 }
 Generator::~Generator(){
     options = nullptr;
@@ -92,8 +95,10 @@ void Generator::generate(const int numThreads){
     Utils::concat(words, numbers);
 
     filter(words);
-    Utils::randomize(words);
-    cases(words);
+#if !_DEBUG
+	Utils::randomize(words);
+#endif
+	cases(words);
     buildSmartWords(words);
     combine(numThreads);
     
@@ -252,30 +257,29 @@ void Generator::threadCombine(){
             int currentIndex = threadWordIndex;
             threadWordIndex++;
         pthread_mutex_unlock(&combineMutex);
-		addVariations(smartWord->word);
-        combine(smartWord->word, smartWord->baseWord); //Start at one level past root
+		addVariations(smartWord->word); //Try adding word
+		unordered_map<string, unsigned char> wordCounts;
+        combine(smartWord->word, wordCounts); //Start at one level past root
     }
 }
 
 //Combine words to fill keyspace
 void Generator::combine(){
-    combine("", "", 1);
+	unordered_map<string, unsigned char> wordCounts;
+    combine("", wordCounts);
 }
-void Generator::combine(const string& currentWord, const string& baseWord){
-    combine(currentWord, baseWord, 1);
-}
-//includeWord - Are we starting at root or one level past root (multi-threading)
-void Generator::combine(const string& currentWord, const string& baseWord, const int sameCount){
+//baseCounts - Number of times each baseWord has been used
+void Generator::combine(const string& currentWord, unordered_map<string, unsigned char> wordCounts){
     int currentWordLen = currentWord.length();
     int smartWordsLen = smartWords.size();
     for (int i = 0; i < smartWordsLen; i++){
         shared_ptr<SmartWord>& smartWord = smartWords.at(i);
+		string& wordCountKey = smartWord->baseWord;
 		
 		//Enforce max same words
-        bool isSameWord = smartWord->baseWord == baseWord;
-        if (isSameWord && sameCount >= SAME_WORD_MAX){
-            continue;
-        }
+		if (wordCounts.find(wordCountKey) != wordCounts.end() && wordCounts[wordCountKey] + 1 >= options->optMaxSameWords){
+			continue;
+		}
 		
         string newWord = currentWord + smartWord->word;
         int newWordLen = newWord.length();
@@ -290,9 +294,15 @@ void Generator::combine(const string& currentWord, const string& baseWord, const
 
         addVariations(newWord, currentWordLen);
 
-		//Recurse!
 		if (newWordLen < options->ksMax){
-			combine(newWord, smartWord->baseWord, (isSameWord) ? sameCount + 1 : 1);
+			wordCounts[wordCountKey]++;
+
+			combine(newWord, wordCounts); //Recurse!
+			
+			wordCounts[wordCountKey]--;
+			if (wordCounts[wordCountKey] == 0){
+				wordCounts.erase(wordCountKey);
+			}
 		}
     }
 }
@@ -307,12 +317,15 @@ void Generator::addVariations(const string& word, const int splitIndex){
 	if (wordLen < options->ksMin - ksMinOffset || wordLen > options->ksMax){
 		return;
 	}
-    vector<string> variations;
-    variations.push_back(word);
-    
     int i;
     int variationsLen;
+    vector<string> variations;
 
+	//Default
+	if (wordLen >= options->ksMin){
+    	variations.push_back(word);
+	}
+    
     //Leet
     if (options->optUseLeet){
         variationsLen = variations.size();

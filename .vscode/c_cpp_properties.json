@@ -55,7 +55,6 @@
                 "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed"
             ],
             "defines": [
-                "_DEBUG",
                 "UNICODE",
                 "__GNUC__=6",
                 "__cdecl=__attribute__((__cdecl__))",
@@ -86,7 +85,6 @@
                 "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include-fixed"
             ],
             "defines": [
-                "_DEBUG",
                 "UNICODE",
                 "__GNUC__=6",
                 "__cdecl=__attribute__((__cdecl__))",

@@ -25,6 +25,7 @@ class Options {
 		static const string DEFAULT_OPT_PREPEND;
 		static const bool  DEFAULT_OPT_USE_APPEND;
 		static const string DEFAULT_OPT_APPEND;
+		static const int DEFAULT_OPT_MAX_SAME_WORDS;
 
 		//Data
 		bool dataIsOrganization = false;
@@ -48,6 +49,7 @@ class Options {
 		string optPrepend = DEFAULT_OPT_PREPEND;
 		bool optUseAppend = DEFAULT_OPT_USE_APPEND;
 		string optAppend = DEFAULT_OPT_APPEND;
+		int optMaxSameWords = DEFAULT_OPT_MAX_SAME_WORDS;
 		
 		vector<shared_ptr<Leet>> optLeets;
 		
