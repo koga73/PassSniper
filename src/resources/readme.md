@@ -1,0 +1,2 @@
+https://stackoverflow.com/questions/16831866/how-to-add-version-details-to-exe-or-dll-through-cmake
+https://www.rodneybeede.com/Compiling_a_C___Windows_executable_with_embedded_version_information_and_icon.html
