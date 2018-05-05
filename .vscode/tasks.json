@@ -1,0 +1,96 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build64-debug",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "g++.exe",
+			"args": [
+				"-D_DEBUG",
+				"-g",
+				"src/*.cpp",
+				"-o",
+				"bin/debug_passsniper64.exe",
+				"-lpthread",
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "build32-debug",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/bin/g++.exe",
+			"args": [
+				"-D_DEBUG",
+				"-g",
+				"src/*.cpp",
+				"-o",
+				"bin/debug_passsniper32.exe",
+				"-lpthread"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "build64-release",
+			"type": "shell",
+			"command": "g++.exe",
+			"args": [
+				"src/*.cpp",
+				"src/resources/versioninfo64.o",
+				"-o",
+				"bin/passsniper64.exe",
+				"-static",
+				"-lpthread",
+				"-O3"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "build32-release",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceRoot}"
+			},
+			"command": "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/bin/g++.exe",
+			"args": [
+				"src/*.cpp",
+				"src/resources/versioninfo32.o",
+				"-o",
+				"bin/passsniper32.exe",
+				"-static",
+				"-lpthread",
+				"-O3"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		}
+	]
+}
