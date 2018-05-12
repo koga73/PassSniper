@@ -14,6 +14,7 @@
 				"-D_DEBUG",
 				"-g",
 				"src/*.cpp",
+				"src/resources/versioninfo64.o",
 				"-o",
 				"bin/debug_passsniper64.exe",
 				"-lpthread",
@@ -36,6 +37,7 @@
 				"-D_DEBUG",
 				"-g",
 				"src/*.cpp",
+				"src/resources/versioninfo32.o",
 				"-o",
 				"bin/debug_passsniper32.exe",
 				"-lpthread"

@@ -33,3 +33,7 @@
 
 # Output
 output.txt
+
+# Debug
+debug_passsniper64.exe
+debug_passsniper32.exe

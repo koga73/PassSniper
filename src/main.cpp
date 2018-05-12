@@ -1,5 +1,5 @@
 #include <iostream>
-#include <conio.h>
+//#include <conio.h>
 
 #include "leet.h"
 #include "options.h"
@@ -54,7 +54,7 @@ int getNum(int defaultVal, string message);
 bool getBool(bool defaultVal, string message);
 string getString(string defaultVal, string message);
 string getString();
-char waitForKey(vector<char>& keys, string message);
+//char waitForKey(vector<char>& keys, string message);
 
 int main(int argc, char **argv){
 	cout << endl;
@@ -67,7 +67,7 @@ int main(int argc, char **argv){
     cout << "     -o00 00o-    Generating targeted wordlists for pentesting                " << endl;
     cout << endl;
     cout << endl;
-    cout << "PassSniper v1.0.0 - By AJ Savino" << endl;
+    cout << "PassSniper v1.1.0 - By AJ Savino" << endl;
     cout << "CLI Usage:" << endl;
     cout << "  passsniper <output>" << endl;
     cout << "    -?  Show commands" << endl;
@@ -162,11 +162,12 @@ arguments getArguments(int argc, char **argv){
 void showWarning(){
     cout << endl;
     cout << "Think before using... don't be a dick.";
-    vector<char> keys {13, 27};
+    /*vector<char> keys {13, 27};
 	char key = waitForKey(keys, "Press [ENTER] to assert that you are not being a dick or [ESCAPE] to exit");
 	if (key == 27){
 		exit(0);
-	}
+	}*/
+	getString("", "Press [ENTER] to assert that you are not being a dick");
 }
 
 bool run(const arguments args){
@@ -227,11 +228,18 @@ shared_ptr<Options> getOptions(const string leetConfigData){
     bool isIndividual;
 	cout << endl;
 	cout << "Select wordlist generation target:";
-	vector<char> targetKeys {49, 50, 13};
+	/*vector<char> targetKeys {49, 50, 13};
 	int targetKey = waitForKey(targetKeys, "[1] Organization | [2] Invididual | [ENTER] Demo Organiztion");
 	isOrganization = targetKey == 49;
 	isIndividual = targetKey == 50;
-	isDemo = targetKey == 13;
+	isDemo = targetKey == 13;*/
+	string target;
+	do {
+		target = getString("", "[1] Organization | [2] Invididual | [ENTER] Demo Organiztion");
+		isOrganization = target == "1";
+		isIndividual = target == "2";
+		isDemo = target == "";
+	} while (!isOrganization && !isIndividual && !isDemo);
 
     if (isDemo){
         options->demoOrganization();
@@ -287,11 +295,21 @@ shared_ptr<Options> getOptions(const string leetConfigData){
     options->dataNumbers = getString();
 
 	cout << endl << "Keyspace and Options:";
-	vector<char> optionsKeys {66, 98, 65, 97, 13};
+	/*vector<char> optionsKeys {66, 98, 65, 97, 13};
 	int optionKey = waitForKey(optionsKeys, "[B]asic | [A]dvanced | [ENTER] for defaults");
 	bool useBasic = optionKey == 66 || optionKey == 98;
 	bool useAdvanced = optionKey == 65 || optionKey == 97;
-	bool useDefault = optionKey == 13;
+	bool useDefault = optionKey == 13;*/
+	bool useBasic;
+	bool useAdvanced;
+	bool useDefault;
+	do {
+		string option = getString("", "[B]asic | [A]dvanced | [ENTER] for defaults");
+		useBasic = option == "b" || option == "B";
+		useAdvanced = option == "a" || option == "A";
+		useDefault = option == "";
+	} while (!useBasic && !useAdvanced && !useDefault);
+
 	if (!useDefault){
 		options->ksMin = getNum(Options::DEFAULT_KS_MIN, "Keyspace - Minimum Length");
 		if (options->ksMin < Options::KS_MIN || options->ksMin > Options::KS_MAX){
@@ -390,7 +408,7 @@ string getString(string defaultVal, string message){
     return val;
 }
 
-char waitForKey(vector<char>& keys, string message){
+/*char waitForKey(vector<char>& keys, string message){
 	int keysLen = keys.size();
 	char key;
     do {
@@ -403,4 +421,4 @@ char waitForKey(vector<char>& keys, string message){
 			}
 		}
     } while (true);
-}
+}*/
