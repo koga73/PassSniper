@@ -42,11 +42,11 @@
                 "databaseFilename": ""
             }
         },
-		{
+        {
             "name": "Win64",
             "intelliSenseMode": "clang-x64",
             "includePath": [
-				"${workspaceRoot}",
+                "${workspaceRoot}",
                 "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++",
                 "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32",
                 "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward",
@@ -62,7 +62,7 @@
             ],
             "browse": {
                 "path": [
-					"C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include",
+                    "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include",
                     "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed",
                     "C:/mingw-w64/x86_64-7.3.0-posix-sjlj-rt_v5-rev0/mingw64/x86_64-w64-mingw32/include/*"
                 ],
@@ -71,8 +71,8 @@
             },
             "cStandard": "c11",
             "cppStandard": "c++17"
-		},
-		{
+        },
+        {
             "name": "Win32",
             "intelliSenseMode": "clang-x64",
             "includePath": [
@@ -92,7 +92,7 @@
             ],
             "browse": {
                 "path": [
-					"C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include",
+                    "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include",
                     "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include-fixed",
                     "C:/mingw-w64/i686-7.3.0-posix-sjlj-rt_v5-rev0/mingw32/i686-w64-mingw32/include/*"
                 ],
@@ -101,7 +101,7 @@
             },
             "cStandard": "c11",
             "cppStandard": "c++17"
-		}
+        }
     ],
-    "version": 3
+    "version": 4
 }
