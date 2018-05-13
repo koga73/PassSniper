@@ -112,8 +112,7 @@ int main(int argc, char **argv){
         }
     }
     
-    cout << endl;
-    system("PAUSE");
+    getString("", "Press [ENTER] to exit");
     return exitCode;
 }
 
