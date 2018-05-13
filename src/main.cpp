@@ -160,13 +160,13 @@ arguments getArguments(int argc, char **argv){
 
 void showWarning(){
     cout << endl;
-    cout << "Think before using... don't be a dick.";
+    cout << "Think before using... don't be a dick";
     /*vector<char> keys {13, 27};
 	char key = waitForKey(keys, "Press [ENTER] to assert that you are not being a dick or [ESCAPE] to exit");
 	if (key == 27){
 		exit(0);
 	}*/
-	getString("", "Press [ENTER] to assert that you are not being a dick");
+	getString("", "Press [ENTER] to continue");
 }
 
 bool run(const arguments args){
