@@ -1,10 +1,10 @@
-all: build64 build32
+linux: build64-linux build32-linux
 
-build64:
-	g++ src/*.cpp -o bin/passsniper64 -static -lpthread -O3
+build64-linux:
+	g++ src/*.cpp -o bin/passsniper64 -pthread -O3
 
-build32:
-	g++ -m32 src/*.cpp -o bin/passsniper32 -static -lpthread -O3
+build32-linux:
+	g++ -m32 src/*.cpp -o bin/passsniper32 -pthread -O3
 
 mac: build64-mac build32-mac
 
