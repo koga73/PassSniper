@@ -222,6 +222,7 @@ void Generator::buildSmartWords(vector<string>& words){
 void* threadCombineEntry(void* obj){
     Generator* gen = (Generator*)obj;
     gen->threadCombine();
+    return NULL;
 }
 void Generator::combine(const int numThreads){
     switch (numThreads){
