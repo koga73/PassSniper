@@ -17,7 +17,7 @@
 				"src/resources/versioninfo64.o",
 				"-o",
 				"bin/debug_passsniper64.exe",
-				"-lpthread",
+				"-pthread",
 			],
 			"presentation": {
 				"echo": true,
@@ -40,7 +40,7 @@
 				"src/resources/versioninfo32.o",
 				"-o",
 				"bin/debug_passsniper32.exe",
-				"-lpthread"
+				"-pthread"
 			],
 			"presentation": {
 				"echo": true,
@@ -59,7 +59,7 @@
 				"-o",
 				"bin/passsniper64.exe",
 				"-static",
-				"-lpthread",
+				"-pthread",
 				"-O3"
 			],
 			"presentation": {
@@ -83,7 +83,7 @@
 				"-o",
 				"bin/passsniper32.exe",
 				"-static",
-				"-lpthread",
+				"-pthread",
 				"-O3"
 			],
 			"presentation": {

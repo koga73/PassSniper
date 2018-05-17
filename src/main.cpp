@@ -67,7 +67,7 @@ int main(int argc, char **argv){
     cout << "     -o00 00o-    Generating targeted wordlists for pentesting                " << endl;
     cout << endl;
     cout << endl;
-    cout << "PassSniper v1.1.0 - By AJ Savino" << endl;
+    cout << "PassSniper v1.2.0 - By AJ Savino" << endl;
     cout << "CLI Usage:" << endl;
     cout << "  passsniper <output>" << endl;
     cout << "    -?  Show commands" << endl;
