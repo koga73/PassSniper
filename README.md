@@ -2,6 +2,14 @@
 By AJ Savino
 Generating targeted wordlists for pentesting
 
-### Build
-- Visual Studio Code
-- Mingw64
+### Build Windows
+- Install Mingw64
+- Use VS Code to build
+
+### Build Mac
+- Install clang++
+- make mac
+
+### Build Linux
+- Install g++
+- make linux
